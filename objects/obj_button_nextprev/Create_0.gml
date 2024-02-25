@@ -1,13 +1,15 @@
 // Variable used for clicked state.
 is_clicked = false;
+is_over = false;
 
 // Variable used for button scaling.
 target_scale = 1.0;
+image_speed = 0;
 
 enum BUTTON_STATE {
 	NORMAL,
 	OVER,
-	CLICK,
+	CLICKED,
 	DISABLED
 }
 
@@ -22,22 +24,14 @@ font_enable_effects(fnt_small_sdf, true, {
 
 dbg_view("NEXT PREV", true, 20, 40, 300, 300);
 
-dbg_section("Vars");
-
 var _object_index = object_get_name(object_index) + ":" + string(instance_id);
-var _watch_image_index = "image_index" + " | " + _object_index;
+dbg_section("Vars: " + _object_index);
+var _watch_image_index = "button: " + button_text;
+dbg_text(_watch_image_index);
+var _ref = ref_create(self, "image_index");
+dbg_watch(_ref,"image_index: ");
 
-dbg_text("image_index = ");
-dbg_same_line();
-dbg_text(string(image_index));
-dbg_watch(ref_create(self, image_index), _watch_image_index);
-
-button1 = function()
-{
-    show_debug_message("Button1 clicked!");
-}
-
-ref = ref_create(self, "button1");
-dbg_text("This text will go here");
-dbg_same_line();
-dbg_button("Button1", ref);
+//var _parent_name = object_get_name(button_parent) + "|" + string(button_parent.instance_id);
+//dbg_text("Parent Obj: ");
+//dbg_same_line();
+//dbg_text(_parent_name);

@@ -1,16 +1,26 @@
 // If mouse is over this instance, adjusting for the GUI layer...
 if (device_mouse_x_to_gui(0) > bbox_left && device_mouse_x_to_gui(0) < bbox_right && device_mouse_y_to_gui(0) > bbox_top && device_mouse_y_to_gui(0) < bbox_bottom)
 {
+	is_over = true;
+	
 	// Reduce target scale size.
 	target_scale = 0.95;
 
-	if (image_index != BUTTON_STATE.OVER) {
+	if (image_index != BUTTON_STATE.OVER && !is_clicked) {
+		
 		image_index = BUTTON_STATE.OVER;
+		show_debug_message("set to OVER");
 	}
 	
 	// If left mouse button is pressed...
 	if (mouse_check_button_pressed(mb_left))
 	{
+		
+		if (image_index != BUTTON_STATE.CLICKED) {
+			image_index = BUTTON_STATE.CLICKED;
+			show_debug_message("set to CLICKED");
+		}
+		
 		// Play click sound effect.
 		audio_play_sound(snd_click, 0, 0, 1.0, undefined, 1.0);
 		
@@ -20,7 +30,6 @@ if (device_mouse_x_to_gui(0) > bbox_left && device_mouse_x_to_gui(0) < bbox_righ
 		// Reduce target scale size further.
 		target_scale = 0.9;
 		
-		image_index = BUTTON_STATE.CLICK;
 	}
 	
 	// Checks if mouse has been clicked on this button.
@@ -28,12 +37,16 @@ if (device_mouse_x_to_gui(0) > bbox_left && device_mouse_x_to_gui(0) < bbox_righ
 	{
 		// Reduce target scale size further.
 		target_scale = 0.9;
-		
+
 		// If left mouse button is released...
 		if (mouse_check_button_released(mb_left))
 		{
 			
-			image_index = BUTTON_STATE.NORMAL;
+			if (image_index != BUTTON_STATE.NORMAL && !is_over) {			
+				image_index = BUTTON_STATE.NORMAL;
+				show_debug_message("set to release NORMAL");				
+			}
+			
 			// Closes the game.
 			if (button_text == "NEXT")
 			{
@@ -64,10 +77,13 @@ if (device_mouse_x_to_gui(0) > bbox_left && device_mouse_x_to_gui(0) < bbox_righ
 else
 {
 	// Reset target scale size.
-	target_scale = 1.0;	
+	target_scale = 1.0;
+	is_over = false;
 	
-	if (image_index != BUTTON_STATE.NORMAL && is_clicked != true) {
+	if (image_index != BUTTON_STATE.NORMAL) {
 		image_index = BUTTON_STATE.NORMAL;
+		show_debug_message("set to mouse leave NORMAL");	
+		
 	}
 	
 }

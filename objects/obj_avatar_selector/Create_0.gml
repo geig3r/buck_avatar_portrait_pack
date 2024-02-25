@@ -8,13 +8,14 @@ var _spr_offset = sprite_get_width(sprite_index) * 0.5;
 arrows_next_x = _spr_offset + _spr_margin;
 arrows_prev_x = -(_spr_offset + _spr_margin);
 
-instance_create_layer(x + arrows_prev_x,y,"Instances",obj_button_nextprev,
+var _prev_button = instance_create_layer(x + arrows_prev_x,y,"Instances",obj_button_nextprev,
 	{
 		button_text : "PREV",
 		button_parent : object_index
 	}
 );
-instance_create_layer(x + arrows_next_x,y,"Instances",obj_button_nextprev,
+
+var _next_button = instance_create_layer(x + arrows_next_x,y,"Instances",obj_button_nextprev,
 	{
 		button_text : "NEXT",
 		button_parent : object_index
