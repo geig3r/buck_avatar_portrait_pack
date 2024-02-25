@@ -1,8 +1,11 @@
-// Set frame.
-image_index = 1;
 
 // Draw self, this is the button sprite.
 draw_self();
+// Set font.
+draw_set_font(fnt_small_sdf);
+
+
+
 
 // Draw the exit icon.
 draw_set_halign(fa_middle);

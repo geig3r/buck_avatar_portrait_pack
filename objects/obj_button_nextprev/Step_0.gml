@@ -3,6 +3,10 @@ if (device_mouse_x_to_gui(0) > bbox_left && device_mouse_x_to_gui(0) < bbox_righ
 {
 	// Reduce target scale size.
 	target_scale = 0.95;
+
+	if (image_index != BUTTON_STATE.OVER) {
+		image_index = BUTTON_STATE.OVER;
+	}
 	
 	// If left mouse button is pressed...
 	if (mouse_check_button_pressed(mb_left))
@@ -15,6 +19,8 @@ if (device_mouse_x_to_gui(0) > bbox_left && device_mouse_x_to_gui(0) < bbox_righ
 		
 		// Reduce target scale size further.
 		target_scale = 0.9;
+		
+		image_index = BUTTON_STATE.CLICK;
 	}
 	
 	// Checks if mouse has been clicked on this button.
@@ -26,6 +32,8 @@ if (device_mouse_x_to_gui(0) > bbox_left && device_mouse_x_to_gui(0) < bbox_righ
 		// If left mouse button is released...
 		if (mouse_check_button_released(mb_left))
 		{
+			
+			image_index = BUTTON_STATE.NORMAL;
 			// Closes the game.
 			if (button_text == "NEXT")
 			{
@@ -57,6 +65,11 @@ else
 {
 	// Reset target scale size.
 	target_scale = 1.0;	
+	
+	if (image_index != BUTTON_STATE.NORMAL && is_clicked != true) {
+		image_index = BUTTON_STATE.NORMAL;
+	}
+	
 }
 
 // Stores how many gamepad count.
