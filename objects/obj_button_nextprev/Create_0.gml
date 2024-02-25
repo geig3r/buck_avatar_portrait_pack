@@ -15,21 +15,15 @@ enum BUTTON_STATE {
 
 
 
-font_enable_effects(fnt_small_sdf, true, {
-    outlineEnable: true,
-    outlineDistance: 2,
-    outlineColour: c_black
-});
 
+//dbg_view("NEXT PREV", true, 20, 40, 300, 300);
 
-dbg_view("NEXT PREV", true, 20, 40, 300, 300);
-
-var _object_index = object_get_name(object_index) + ":" + string(instance_id);
-dbg_section("Vars: " + _object_index);
-var _watch_image_index = "button: " + button_text;
-dbg_text(_watch_image_index);
-var _ref = ref_create(self, "image_index");
-dbg_watch(_ref,"image_index: ");
+//var _object_index = object_get_name(object_index) + ":" + string(instance_id);
+//dbg_section("Vars: " + _object_index);
+//var _watch_image_index = "button: " + button_text;
+//dbg_text(_watch_image_index);
+//var _ref = ref_create(self, "image_index");
+//dbg_watch(_ref,"image_index: ");
 
 //var _parent_name = object_get_name(button_parent) + "|" + string(button_parent.instance_id);
 //dbg_text("Parent Obj: ");

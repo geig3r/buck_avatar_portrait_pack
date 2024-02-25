@@ -2,6 +2,8 @@
 // You can write your code in this editor
 
 
+selector_name = "Selector Parent";
+
 arrows = spr_button_nextprev;
 var _spr_margin = 10;
 var _spr_offset = sprite_get_width(sprite_index) * 0.5;

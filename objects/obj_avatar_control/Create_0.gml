@@ -17,5 +17,10 @@ global.debug = false;
 //text = "new text";
 
 
+font_enable_effects(fnt_small_sdf, true, {
+    outlineEnable: true,
+    outlineDistance: 2,
+    outlineColour: c_black
+});
 
 
