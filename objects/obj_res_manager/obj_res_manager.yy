@@ -5,13 +5,12 @@
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":4,"eventType":7,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Internal_GML",
-    "path": "folders/Objects/Placeholder/New/Internal_GML.yy",
+    "name": "System",
+    "path": "folders/Objects/Engine/System.yy",
   },
   "parentObjectId": null,
   "persistent": true,

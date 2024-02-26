@@ -10,8 +10,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "New",
-    "path": "folders/Objects/Placeholder/New.yy",
+    "name": "System",
+    "path": "folders/Objects/Engine/System.yy",
   },
   "parentObjectId": null,
   "persistent": false,

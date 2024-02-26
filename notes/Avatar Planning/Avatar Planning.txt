@@ -1,0 +1,47 @@
+Avatar Planning
+
+how to lock skin color for various body parts.  We'll pass the skin type and have a flag that locks it. 
+Maybe an array of the locked types.  
+
+if type == skin_lockedd then check for the last set skintone of those types. Maybe store it as soon 
+as one of the locked is changed.  
+
+
+Need to lock skill tone
+Need to lock torso and clothes based upon fem/masc
+
+
+
+
+
+
+Have feminine/masculine toggle 
+
+- Set so you can have multple of
+> face markings
+> eye patch, nose ring, septum ring, earrings in ears folder
+
+
+- Get skin tones together with an option to turn it off.
+> Ears (non animal)
+> Headshapes
+> Torso
+> Nose
+
+- Not
+> Eyebags
+> Eyelids 
+
+Sclera 
+
+
+We'll have two selections, one will be type, the second will be the variations. Use sub sub folder for the labels
+
+Separate torso wear from torsos.
+
+Move pupils to irises
+
+
+Do custom art for a few things
+> sclera - make a few more version, glowing eyes
+> thug life glasses

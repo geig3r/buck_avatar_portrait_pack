@@ -1,0 +1,12 @@
+Scribble notes
+
+scribble("[fnt_premenu][fa_center][fa_middle][alpha, " + string(alpha) + "]Tap to Start[/]").draw(room_width * 0.5, room_height * 0.7);
+
+	scribble_font_bake_outline_8dir_2px("fnt_button", "fnt_button_outlined", c_black, true);
+	scribble_font_bake_outline_8dir_2px("fnt_titi_b", "fnt_titi_b_outlined", c_black, true);
+
+	//scribble_font_set_default("fnt_titi_outlined");
+	//scribble_font_bake_outline_8dir_2px("fnt_titi", "fnt_titi_outlined", c_black, true);
+	//scribble_font_bake_outline_8dir_2px("fnt_titi_i", "fnt_titi_i_outlined", c_black, true);
+	//scribble_font_bake_outline_8dir_2px("fnt_titi_bi", "fnt_titi_bi_outlined", c_black, true);
+	//scribble_font_set_style_family("fnt_titi_outlined", "fnt_titi_b_outlined", "fnt_titi_i_outlined", "fnt_titi_bi_outlined");

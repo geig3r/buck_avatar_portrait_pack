@@ -12,8 +12,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Placeholder",
-    "path": "folders/Objects/Placeholder.yy",
+    "name": "UI",
+    "path": "folders/Objects/Placeholder/UI.yy",
   },
   "parentObjectId": null,
   "persistent": false,
@@ -31,10 +31,7 @@
   "physicsStartAwake": true,
   "properties": [],
   "solid": false,
-  "spriteId": {
-    "name": "spr_highscore_card",
-    "path": "sprites/spr_highscore_card/spr_highscore_card.yy",
-  },
+  "spriteId": null,
   "spriteMaskId": null,
   "visible": true,
 }
