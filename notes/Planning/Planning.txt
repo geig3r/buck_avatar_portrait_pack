@@ -1,0 +1,11 @@
+
+
+UI Planning
+* Create buttons, popups, page headers
+* have parent/child relationship for things like popups and page headers
+* be able tp speficy attach position on parent
+* all ui elements to have events/callbacks for events
+* have the ability to draw to surface for animating by making a sprite out of the surface
+** Hides actual ui until after animation for smooth handoff
+** Disable interactions during anim, re-enable after
+

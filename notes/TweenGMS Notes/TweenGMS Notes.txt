@@ -1,0 +1,53 @@
+
+TweenGMS
+> to
+< from // when added to end of property string
+
+
+TweenFire(id, "io", 0, true, 0, 1, "image_scale>", [1.2]); // brackets make relative to current value 
+
+value = -100;
+TweenFire(id, "io", 0, true, 0, 1, "x>", "x+value"); // can use string to pull variable
+
+TweenFire(id, "io", "once", true, 1, 1, "x>", mouse_x); // moves to where the mouse clicked at end of 1 sec
+TweenFire(id, "io", "once", true, 1, 1, "x>", "mouse_x"); // moves to where the mouse is at end of 1 sec
+
+TweenFire((id, "io", "once", true, 1, 1, "image_angle>", "@+90"); // @ is shorthand for the attribute name
+
+TweenStop(all);
+TweenStop(self);
+TweenStop(other);
+
+tween_example = TweenFire(id, "io", "patrol", true, 0, 1, "x", 100, room_width+100);
+
+TweenSet(tween_example, "rest", 1); // for tweeens that have continue motion
+TweenSet(tween_example, "rest", [0,1]); // set rest value at either end of animation
+TweenSet(tween_example, "continue_count", 4); // works for patrol loop and repeat, sets number of loops
+TweenSet(tween_example, "rest", 0.5, "continue_count", 2); // multiple settings in one set
+
+// lazy tween id you can use Tweenfire without setting to variable, and just set id to 0 on TweenSet 
+// means the last tween created
+TweenFire(id, "io", "patrol", true, 0, 1, "x", 100, room_width+100);
+TweenSet(0, "rest", 1); // for tweeens that have continue motion
+
+// Tween swapping use array to set in/out easing
+TweenFire((id, ["outBounce", "ioSine"], "patrol", true, 0, [1,2], "y", 64, "room_height-64); // @ is shorthand for the attribute name
+
+// Property modifiers
+
+TweenFire(id, "io", "patrol", true, 0, 1, TPSnap("x", 100), 100, room_width+100);
+TweenFire(id, "io", "patrol", true, 0, 1, TPShake("x", 100), 100, room_width+100, TPShake "y", 50), y, y);
+
+
+// Path tweening multi advanced tweens
+TweenFire(id, "io", "loop", true, 0, 1, TPPath(path_cool, true), 0, 1);  // tweens path
+TweenFire(id, "io", "loop", true, 0, 1, TPPath(path_cool, true), 0, 1, "image_scale", 0, 1); // tweens path and image scale
+
+// normalized durations
+TweenFire(id, "io", "patrol", true, 0, 1, "x", 100, room_width+100); // from static value
+TweenFire(id, "io", "patrol", true, 0, [100], "x", 100, room_width+100); // to pixels per second value
+
+TweenFire(id, "io", "patrol", true, 0, 1, "x", mouse_x, "y", mouse_y);
+TweenFire(id, "io", "patrol", true, 0, [250], "x", mouse_x, "y", mouse_y); // normalizes speed 
+
+

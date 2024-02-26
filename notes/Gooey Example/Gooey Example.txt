@@ -1,0 +1,1819 @@
+Example from GOooey
+
+#region Helper Enums and Macros
+	#macro UI_TEXT_RENDERER		scribble
+	#macro GOOEY_NUM_CALLBACKS	15
+	#macro UI_LIBRARY_NAME		"unicornUI"
+	#macro UI_LIBRARY_VERSION	"2024.01"
+	#macro UI_SCROLL_SPEED		20
+	
+	enum UI_EVENT {
+		MOUSE_OVER,
+		LEFT_CLICK,
+		MIDDLE_CLICK,
+		RIGHT_CLICK,
+		LEFT_HOLD,
+		MIDDLE_HOLD,
+		RIGHT_HOLD,
+		LEFT_RELEASE,
+		MIDDLE_RELEASE,
+		RIGHT_RELEASE,
+		MOUSE_ENTER,		
+		MOUSE_EXIT,
+		MOUSE_WHEEL_UP,
+		MOUSE_WHEEL_DOWN,
+		
+		VALUE_CHANGED
+	}
+	
+	enum UI_TYPE {
+		PANEL,
+		BUTTON,
+		TEXT,
+		SPRITE,
+	}
+
+	enum UI_ANCHOR_TO {
+		TOP_LEFT,
+		TOP_CENTER,
+		TOP_RIGHT,
+		MIDDLE_LEFT,
+		MIDDLE_CENTER,
+		MIDDLE_RIGHT,
+		BOTTOM_LEFT,
+		BOTTOM_CENTER,
+		BOTTOM_RIGHT
+	}
+	
+
+#endregion
+
+#region Widgets
+
+	
+	#region UIButton
+	
+		/// @constructor	UIButton(_id, _x, _y, _width, _height, _text, _sprite, [_relative_to=UI_RELATIVE_TO.TOP_LEFT])
+		/// @extends		UIWidget
+		/// @description	A Button widget, clickable UI widget that performs an action
+		/// @param			{String}			_id				The Button's name, a unique string ID. If the specified name is taken, the Button will be renamed and a message will be displayed on the output log.
+		/// @param			{Real}				_x				The x position of the Button, **relative to its parent**, according to the _relative_to parameter
+		/// @param			{Real}				_y				The y position of the Button, **relative to its parent**, according to the _relative_to parameter	
+		/// @param			{Real}				_width			The width of the Button
+		/// @param			{Real}				_height			The height of the Button
+		/// @param			{String}			_text			The text to display for the Button
+		/// @param			{Asset.GMSprite}	_sprite			The sprite ID to use for rendering the Button
+		/// @param			{Enum}				[_relative_to]	The position relative to which the Button will be drawn. By default, the top left (TOP_LEFT) <br>
+		///														See the [UIWidget](#UIWidget) documentation for more info and valid values.
+		/// @return			{UIButton}							self
+		function UIButton(_id, _x, _y, _width, _height, _text, _sprite, _relative_to=UI_RELATIVE_TO.TOP_LEFT) : __UIWidget(_id, _x, _y, _width, _height, _sprite, _relative_to) constructor {
+			#region Private variables
+				self.__type = UI_TYPE.BUTTON;
+				self.__text = _text;
+				self.__text_mouseover = _text;
+				self.__text_click = _text;
+				self.__text_disabled = _text;
+				self.__sprite_mouseover = _sprite;
+				self.__sprite_click = _sprite;
+				self.__sprite_disabled = _sprite;
+				self.__image_mouseover = 0;
+				self.__image_click = 0;			
+				self.__image_disabled = 0;
+				self.__text_format = "";
+				self.__text_format_mouseover = "";
+				self.__text_format_click = "";
+				self.__text_format_disabled = "";
+				self.__text_relative_to = UI_RELATIVE_TO.MIDDLE_CENTER;
+				self.__text_offset = {x: 0, y:0};
+			#endregion
+			#region Setters/Getters
+			
+				// Note: set/get sprite, set/get image inherited from UIWidget.
+			
+				/// @method				getRawText()
+				/// @description		Gets the text of the button, without Scribble formatting tags.
+				///	@return				{String}	The text, without Scribble formatting tags.			
+				self.getRawText = function()						{ return UI_TEXT_RENDERER(self.__text).get_text(); }
+			
+				/// @method				getText()
+				/// @description		Gets the Scribble text string of the button, either via the defined binding or, if undefined, the defined text.
+				///	@return				{String}	The Scribble text string of the button.
+				self.getText = function()	{
+					var _text = self.__updateBinding();
+					if (is_undefined(_text))	return self.__text;
+					else if (is_method(_text))	return _text();
+					else return _text;
+				}
+			
+				/// @method				setText(_text)
+				/// @description		Sets the Scribble text string of the button.
+				/// @param				{String}	_text	The Scribble string to assign to the button.			
+				/// @return				{UIButton}	self
+				self.setText = function(_text)						{ self.__text = _text; return self; }
+						
+				/// @method				getRawTextMouseover()
+				/// @description		Gets the text of the button when mouseovered, without Scribble formatting tags.
+				///	@return				{String}	The text, without Scribble formatting tags.			
+				self.getRawTextMouseover = function()				{ return UI_TEXT_RENDERER(self.__text_mouseover).get_text(); }	
+			
+				/// @method				getTextMouseover()
+				/// @description		Gets the Scribble text string of the button when mouseovered.
+				///	@return				{String}	The Scribble text string of the button when mouseovered.
+				self.getTextMouseover = function()					{ return self.__text_mouseover; }
+			
+				/// @method				setTextMouseover(_text)
+				/// @description		Sets the Scribble text string of the button when mouseovered.
+				/// @param				{String}	_text	The Scribble string to assign to the button when mouseovered.
+				/// @return				{UIButton}	self
+				self.setTextMouseover = function(_text_mouseover)	{ self.__text_mouseover = _text_mouseover; return self; }
+			
+				/// @method				getRawTextClick()
+				/// @description		Gets the text of the button when clicked, without Scribble formatting tags.
+				///	@return				{String}	The text, without Scribble formatting tags.			
+				self.getRawTextClick = function()					{ return UI_TEXT_RENDERER(self.__text_click).get_text(); }
+			
+				/// @method				getTextClick()
+				/// @description		Gets the Scribble text string of the button when clicked.
+				///	@return				{String}	The Scribble text string of the button when clicked.
+				self.getTextClick = function()						{ return self.__text_click; }
+			
+				/// @method				setTextClick(_text)
+				/// @description		Sets the Scribble text string of the button when clicked.
+				/// @param				{String}	_text	The Scribble string to assign to the button when clicked.
+				/// @return				{UIButton}	self
+				self.setTextClick = function(_text_click)			{ self.__text_click = _text_click; return self; }
+				
+				/// @method				getRawTextDisabled()
+				/// @description		Gets the text of the button when disabled, without Scribble formatting tags.
+				///	@return				{String}	The text, without Scribble formatting tags.			
+				self.getRawTextDisabled = function()					{ return UI_TEXT_RENDERER(self.__text_disabled).get_text(); }
+			
+				/// @method				getTextDisabled()
+				/// @description		Gets the Scribble text string of the button when disabled.
+				///	@return				{String}	The Scribble text string of the button when disabled.
+				self.getTextDisabled = function()						{ return self.__text_disabled; }
+			
+				/// @method				setTextDisabled(_text)
+				/// @description		Sets the Scribble text string of the button when disabled.
+				/// @param				{String}	_text	The Scribble string to assign to the button when disabled.
+				/// @return				{UIButton}	self
+				self.setTextDisabled = function(_text_disabled)			{ self.__text_disabled = _text_disabled; return self; }
+				
+				
+				/// @method				getTextFormat()
+				/// @description		Gets the general Scribble string format (tags) of the button on its normal state
+				///	@return				{String}	The Scribble text string format
+				self.getTextFormat = function()					{ return self.__text_format; }
+			
+				/// @method				setTextFormat(_text_format)
+				/// @description		Sets the general Scribble string format (tags) of the button on its normal state
+				/// @param				{String}	_text_format	The Scribble tag format to render the button 
+				/// @return				{UIButton}	self
+				self.setTextFormat = function(_text_format)	{ self.__text_format = _text_format; return self; }
+				
+				/// @method				getTextFormatMouseover()
+				/// @description		Gets the general Scribble string format (tags) of the button on its mouseovered state
+				///	@return				{String}	The Scribble text string format
+				self.getTextFormatMouseover = function()					{ return self.__text_format_mouseover; }
+			
+				/// @method				setTextFormatMouseover(_text_format)
+				/// @description		Sets the general Scribble string format (tags) of the button on its mouseovered state
+				/// @param				{String}	_text_format	The Scribble tag format to render the button when mouseovered
+				/// @return				{UIButton}	self
+				self.setTextFormatMouseover = function(_text_format)	{ self.__text_format_mouseover = _text_format; return self; }
+				
+				/// @method				getTextFormatClick()
+				/// @description		Gets the general Scribble string format (tags) of the button on its clicked state
+				///	@return				{String}	The Scribble text string format
+				self.getTextFormatClick = function()					{ return self.__text_format_click; }
+			
+				/// @method				setTextFormatClick(_text_format)
+				/// @description		Sets the general Scribble string format (tags) of the button on its clicked state
+				/// @param				{String}	_text_format	The Scribble tag format to render the button when clicked
+				/// @return				{UIButton}	self
+				self.setTextFormatClick = function(_text_format)	{ self.__text_format_click = _text_format; return self; }
+				
+				/// @method				getTextFormatDisabled()
+				/// @description		Gets the general Scribble string format (tags) of the button on its disabled state
+				///	@return				{String}	The Scribble text string format
+				self.getTextFormatDisabled = function()					{ return self.__text_format_disabled; }
+			
+				/// @method				setTextFormatDisabled(_text_format)
+				/// @description		Sets the general Scribble string format (tags) of the button on its disabled state
+				/// @param				{String}	_text_format	The Scribble tag format to render the button when disabled
+				/// @return				{UIButton}	self
+				self.setTextFormatDisabled = function(_text_format)	{ self.__text_format_disabled = _text_format; return self; }
+				
+				/// @method				getSpriteMouseover()
+				/// @description		Gets the sprite ID of the button when mouseovered			
+				/// @return				{Asset.GMSprite}	The sprite ID of the button when mouseovered
+				self.getSpriteMouseover = function()				{ return self.__sprite_mouseover; }
+			
+				/// @method				setSpriteMouseover(_sprite)
+				/// @description		Sets the sprite to be rendered when mouseovered.
+				/// @param				{Asset.GMSprite}	_sprite		The sprite ID
+				/// @return				{UIButton}	self
+				self.setSpriteMouseover = function(_sprite)			{ self.__sprite_mouseover = _sprite; return self; }
+			
+				/// @method				getSpriteClick()
+				/// @description		Gets the sprite ID of the button when clicked.			
+				/// @return				{Asset.GMSprite}	The sprite ID of the button when clicked
+				self.getSpriteClick = function()					{ return self.__sprite_click; }
+						
+				/// @method				setSpriteClick(_sprite)
+				/// @description		Sets the sprite to be rendered when clicked.
+				/// @param				{Asset.GMSprite}	_sprite		The sprite ID
+				/// @return				{UIButton}	self
+				self.setSpriteClick = function(_sprite)				{ self.__sprite_click = _sprite; return self; }
+								
+				/// @method				getSpriteDisabled()
+				/// @description		Gets the sprite ID of the button when disabled.			
+				/// @return				{Asset.GMSprite}	The sprite ID of the button when disabled
+				self.getSpriteDisabled = function()					{ return self.__sprite_disabled; }
+						
+				/// @method				setSpriteDisabled(_sprite)
+				/// @description		Sets the sprite to be rendered when disabled.
+				/// @param				{Asset.GMSprite}	_sprite		The sprite ID
+				/// @return				{UIButton}	self
+				self.setSpriteDisabled = function(_sprite)				{ self.__sprite_disabled = _sprite; return self; }
+
+				/// @method				getImageMouseover()
+				/// @description		Gets the image index of the button when mouseovered.		
+				/// @return				{Real}	The image index of the button when mouseovered
+				self.getImageMouseover = function()					{ return self.__image_mouseover; }
+			
+				/// @method				setImageMouseover(_image)
+				/// @description		Sets the image index of the button when mouseovered
+				/// @param				{Real}	_image	The image index
+				/// @return				{UIButton}	self
+				self.setImageMouseover = function(_image)			{ self.__image_mouseover = _image; return self; }
+			
+				/// @method				getImageClick()
+				/// @description		Gets the image index of the button when clicked.
+				/// @return				{Real}	The image index of the button when clicked
+				self.getImageClick = function()						{ return self.__image_click; }
+			
+				/// @method				setImageClick(_image)
+				/// @description		Sets the image index of the button when clicked.
+				/// @param				{Real}	_image	The image index
+				/// @return				{UIButton}	self
+				self.setImageClick = function(_image)				{ self.__image_click = _image; return self; }
+				
+				/// @method				getImageDisabled()
+				/// @description		Gets the image index of the button when disabled.
+				/// @return				{Real}	The image index of the button when disabled
+				self.getImageDisabled = function()						{ return self.__image_disabled; }
+			
+				/// @method				setImageDisabled(_image)
+				/// @description		Sets the image index of the button when disabled.
+				/// @param				{Real}	_image	The image index
+				/// @return				{UIButton}	self
+				self.setImageDisabled = function(_image)				{ self.__image_disabled = _image; return self; }
+				
+				/// @method				getTextRelativeTo()
+				/// @description		Gets the positioning of the button text relative to the button, according to UI_RELATIVE_TO
+				/// @return				{Enum}	The relative positioning of the text within the button
+				self.getTextRelativeTo = function()						{ return self.__text_relative_to; }
+			
+				/// @method				setTextRelativeTo(_relative_to)
+				/// @description		Sets the positioning of the button text relative to the button, according to UI_RELATIVE_TO
+				/// @param				{Enum}	_relative_to	The relative positioning of the text within the button
+				/// @return				{UIButton}	self
+				self.setTextRelativeTo = function(_relative_to)			{ self.__text_relative_to = _relative_to; return self; }
+				
+				/// @method				getTextOffset()
+				/// @description		Gets the text x-y offset for the button, starting from the anchor point
+				/// @return				{Struct}	A struct with x and y position
+				self.getTextOffset = function()						{ return self.__text_offset; }
+			
+				/// @method				setTextOffset(_offset)
+				/// @description		Sets the text x-y offset for the button, starting from the anchor point
+				/// @param				{Struct}	_offset		A struct with x and y position
+				/// @return				{UIButton}	self
+				self.setTextOffset = function(_offset)			{ self.__text_offset = _offset; return self; }
+				
+			#endregion
+			#region Methods
+				self.__draw = function() {
+					var _x = self.__dimensions.x;
+					var _y = self.__dimensions.y;
+					var _width = self.__dimensions.width * UI.getScale();
+					var _height = self.__dimensions.height * UI.getScale();
+					
+					var _bound = !is_undefined(self.__binding);
+										
+					if (self.__enabled) {
+						var _sprite = self.__sprite;
+						var _image = self.__image;
+						var _text = self.getText();
+						var _fmt = self.getTextFormat();
+						if (self.__events_fired[UI_EVENT.MOUSE_OVER])	{					
+							_sprite =	self.__events_fired[UI_EVENT.LEFT_HOLD] ? self.__sprite_click : self.__sprite_mouseover;
+							_image =	self.__events_fired[UI_EVENT.LEFT_HOLD] ? self.__image_click : self.__image_mouseover;
+							_text =		self.__events_fired[UI_EVENT.LEFT_HOLD] ? (_bound ? self.getText() : self.__text_click) : (_bound ? self.getText() : self.__text_mouseover);
+							_fmt =		self.__events_fired[UI_EVENT.LEFT_HOLD] ? self.getTextFormatClick() : self.getTextFormatMouseover();											
+						}
+					}
+					else {
+						var _sprite = self.__sprite_disabled;
+						var _image = self.__image_disabled;
+						var _text = (_bound ? self.getText() : self.__text_disabled);
+						var _fmt = self.getTextFormatDisabled();
+					}
+					if (sprite_exists(_sprite)) draw_sprite_stretched_ext(_sprite, _image, _x, _y, _width, _height, self.__image_blend, self.__image_alpha);
+					
+					if (self.__text_relative_to == UI_RELATIVE_TO.TOP_CENTER || self.__text_relative_to == UI_RELATIVE_TO.MIDDLE_CENTER || self.__text_relative_to == UI_RELATIVE_TO.BOTTOM_CENTER)	_x += self.__dimensions.width / 2;
+					if (self.__text_relative_to == UI_RELATIVE_TO.TOP_RIGHT || self.__text_relative_to == UI_RELATIVE_TO.MIDDLE_RIGHT || self.__text_relative_to == UI_RELATIVE_TO.BOTTOM_RIGHT)		_x += self.__dimensions.width;
+					if (self.__text_relative_to == UI_RELATIVE_TO.MIDDLE_LEFT || self.__text_relative_to == UI_RELATIVE_TO.MIDDLE_CENTER || self.__text_relative_to == UI_RELATIVE_TO.MIDDLE_RIGHT)	_y += self.__dimensions.height / 2;
+					if (self.__text_relative_to == UI_RELATIVE_TO.BOTTOM_LEFT || self.__text_relative_to == UI_RELATIVE_TO.BOTTOM_CENTER || self.__text_relative_to == UI_RELATIVE_TO.BOTTOM_RIGHT)	_y += self.__dimensions.height;
+					
+					_x += self.__text_offset.x;
+					_y += self.__text_offset.y;
+					
+					var _scale = "[scale,"+string(UI.getScale())+"]";
+					UI_TEXT_RENDERER(_scale+_fmt+string(_text)).draw(_x, _y);
+				}
+				self.__generalBuiltInBehaviors = method(self, __builtInBehavior);
+				self.__builtInBehavior = function() {
+					if (self.__events_fired[UI_EVENT.LEFT_CLICK]) 	self.__callbacks[UI_EVENT.LEFT_CLICK]();
+					var _arr = array_create(GOOEY_NUM_CALLBACKS, true);
+					_arr[UI_EVENT.LEFT_CLICK] = false;
+					self.__generalBuiltInBehaviors(_arr);
+				}
+			#endregion
+		
+			self.__register();
+			return self;
+		}
+	
+	
+	#endregion
+
+	#region UIText
+	
+		/// @constructor	UIText(_id, _x, _y, _text, [_relative_to=UI_RELATIVE_TO.TOP_LEFT])
+		/// @extends		UIWidget
+		/// @description	A Text widget, which renders a Scribble text to the screen
+		/// @param			{String}			_id				The Text's name, a unique string ID. If the specified name is taken, the Text will be renamed and a message will be displayed on the output log.
+		/// @param			{Real}				_x				The x position of the Text, **relative to its parent**, according to the _relative_to parameter
+		/// @param			{Real}				_y				The y position of the Text, **relative to its parent**, according to the _relative_to parameter		
+		/// @param			{String}			_text			The text to display for the Button
+		/// @param			{Enum}				[_relative_to]	The position relative to which the Text will be drawn. By default, the top left (TOP_LEFT) <br>
+		///														See the [UIWidget](#UIWidget) documentation for more info and valid values.
+		/// @return			{UIText}							self
+		function UIText(_id, _x, _y, _text, _relative_to=UI_RELATIVE_TO.TOP_LEFT) : __UIWidget(_id, _x, _y, 0, 0, -1, _relative_to) constructor {
+			#region Private variables
+				self.__type = UI_TYPE.TEXT;
+				self.__text = _text;
+				self.__text_mouseover = _text;
+				self.__text_click = _text;
+				self.__border_color = -1;
+				self.__background_color = -1;
+				self.__max_width = 0;
+				self.__typist = undefined;
+				self.__background_alpha = 1;
+			#endregion
+			#region Setters/Getters
+				/// @method				getRawText()
+				/// @description		Gets the text of the UIText, without Scribble formatting tags.
+				///	@return				{String}	The text, without Scribble formatting tags.			
+				self.getRawText = function()						{ return UI_TEXT_RENDERER(self.__text).get_text(); }
+			
+				/// @method				getText()
+				/// @description		Gets the Scribble text string of the UIText, either via the defined binding or, if undefined, the defined text.
+				///	@return				{String}	The Scribble text string of the button.
+				self.getText = function() {
+					var _text = self.__updateBinding();
+					if (is_undefined(_text))	return self.__text;
+					else if (is_method(_text))	return _text();
+					else return _text;
+				}
+			
+				/// @method				setText(_text)
+				/// @description		Sets the Scribble text string of the UIText.
+				/// @param				{String}	_text	The Scribble string to assign to the UIText.			
+				/// @return				{UIText}	self
+				self.setText = function(_text)						{ self.__text = _text; return self; }
+						
+				/// @method				getRawTextMouseover()
+				/// @description		Gets the text of the UIText when mouseovered, without Scribble formatting tags.
+				///	@return				{String}	The text, without Scribble formatting tags.			
+				self.getRawTextMouseover = function()				{ return UI_TEXT_RENDERER(self.__text_mouseover).get_text(); }	
+			
+				/// @method				getTextMouseover()
+				/// @description		Gets the Scribble text string of the UIText when mouseovered.
+				///	@return				{String}	The Scribble text string of the UIText when mouseovered.
+				self.getTextMouseover = function()					{ return self.__text_mouseover; }
+			
+				/// @method				setTextMouseover(_text)
+				/// @description		Sets the Scribble text string of the UIText when mouseovered.
+				/// @param				{String}	_text	The Scribble string to assign to the UIText when mouseovered.
+				/// @return				{UIText}	self
+				self.setTextMouseover = function(_text_mouseover)	{ self.__text_mouseover = _text_mouseover; return self; }
+			
+				/// @method				getRawTextClick()
+				/// @description		Gets the text of the UIText when clicked, without Scribble formatting tags.
+				///	@return				{String}	The text, without Scribble formatting tags.			
+				self.getRawTextClick = function()					{ return UI_TEXT_RENDERER(self.__text_click).get_text(); }
+			
+				/// @method				getTextClick()
+				/// @description		Gets the Scribble text string of the UIText when clicked.
+				///	@return				{String}	The Scribble text string of the UIText when clicked.
+				self.getTextClick = function()						{ return self.__text_click; }
+			
+				/// @method				setTextClick(_text)
+				/// @description		Sets the Scribble text string of the UIText when clicked.
+				/// @param				{String}	_text	The Scribble string to assign to the UIText when clicked.
+				/// @return				{UIText}	self
+				self.setTextClick = function(_text_click)			{ self.__text_click = _text_click; return self; }
+			
+				/// @method				getBorderColor()
+				/// @description		Gets the border color of the text, or -1 if invisible
+				///	@return				{Constant.Colour}	The border color or -1
+				self.getBorderColor = function()					{ return self.__border_color; }
+			
+				/// @method				setBorderColor(_color)
+				/// @description		Sets the border color of the text to a color, or unsets it if it's -1
+				/// @param				{Constant.Color}	_color	The color constant, or -1
+				/// @return				{UIText}	self
+				self.setBorderColor = function(_color)			{ self.__border_color = _color; return self; }
+			
+				/// @method				getBackgroundColor()
+				/// @description		Gets the background color of the text, or -1 if invisible
+				///	@return				{Constant.Colour}	The background color or -1
+				self.getBackgroundColor = function()				{ return self.__background_color; }
+			
+				/// @method				setBackgroundColor(_color)
+				/// @description		Sets the background color of the text to a color, or unsets it if it's -1
+				/// @param				{Constant.Color}	_color	The color constant, or -1
+				/// @return				{UIText}	self
+				self.setBackgroundColor = function(_color)			{ self.__background_color = _color; return self; }
+				
+				/// @method				getBackgroundAlpha()
+				/// @description		Gets the background alpha of the text background
+				///	@return				{Real}	The background alpha
+				self.getBackgroundAlpha = function()				{ return self.__background_alpha; }
+			
+				/// @method				setBackgroundAlpha(_alpha)
+				/// @description		Sets the background alpha of the text background
+				/// @param				{Real}	_alpha	The alpha value
+				/// @return				{UIText}	self
+				self.setBackgroundAlpha = function(_alpha)			{ self.__background_alpha = _alpha; return self; }
+			
+				/// @method				getTypist()
+				/// @description		Gets the text renderer typist
+				///	@return				{Any}	The typist
+				self.getTypist = function()				{ return self.__background_color; }
+			
+				/// @method				setTypist(_typist)
+				/// @description		Sets the text renderer typist
+				/// @param				{Any}	_typist	The typist to set
+				/// @return				{UIText}	self
+				self.setTypist = function(_typist)			{ self.__typist = _typist; return self; }
+			
+				
+				/// @method				getMaxWidth()
+				/// @description		Gets the max width of the text element. If greater than zero, text will wrap to the next line when it reaches the maximum width.
+				///	@return				{Real}	The max width, or 0 if unlimited
+				self.getMaxWidth = function()				{ return self.__max_width; }
+			
+				/// @method				setMaxWidth(_max_width)
+				/// @description		Sets the max width of the text element. If greater than zero, text will wrap to the next line when it reaches the maximum width.
+				/// @param				{Real}	_max_width	The max width, or 0 if unlimited
+				/// @return				{UIText}	self
+				self.setMaxWidth = function(_max_width)			{ self.__max_width = _max_width; return self; }
+			#endregion
+			#region Methods
+				self.__draw = function() {
+					var _x = self.__dimensions.x;
+					var _y = self.__dimensions.y;					
+										
+					var _text = self.getText();
+					var _scale = "[scale,"+string(UI.getScale())+"]";
+										
+					if (self.__events_fired[UI_EVENT.MOUSE_OVER])	{					
+						_text =	self.__events_fired[UI_EVENT.LEFT_HOLD] ? self.__text_click : self.__text_mouseover;
+					}
+				
+					var _s = UI_TEXT_RENDERER(_scale+string(_text));					
+					if (self.__max_width > 0)	_s.wrap(self.__max_width);
+					
+					//self.setDimensions(self.getDimensions().offset_x+_s.get_width(),self.getDimensions().offset_y+_s.get_height(),_s.get_width(), _s.get_height());
+					
+					var _x1 = _s.get_left(_x);
+					var _x2 = _s.get_right(_x);
+					var _y1 = _s.get_top(_y);
+					var _y2 = _s.get_bottom(_y);
+					var _alpha = draw_get_alpha();
+					draw_set_alpha(self.__background_alpha);
+					if (self.__background_color != -1)	draw_rectangle_color(_x1, _y1, _x2, _y2, self.__background_color, self.__background_color, self.__background_color, self.__background_color, false);
+					draw_set_alpha(_alpha);
+					if (self.__border_color != -1)		draw_rectangle_color(_x1, _y1, _x2, _y2, self.__border_color, self.__border_color, self.__border_color, self.__border_color, true);
+					_s.draw(_x, _y, self.__typist);
+					//draw_circle_color(_x, _y, 2, c_red, c_red, false);					
+				}
+				self.__generalBuiltInBehaviors = method(self, __builtInBehavior);
+				self.__builtInBehavior = function() {
+					if (self.__events_fired[UI_EVENT.LEFT_CLICK]) 	self.__callbacks[UI_EVENT.LEFT_CLICK]();
+					var _arr = array_create(GOOEY_NUM_CALLBACKS, true);
+					_arr[UI_EVENT.LEFT_CLICK] = false;
+					self.__generalBuiltInBehaviors(_arr);
+				}
+			#endregion
+		
+			self.__register();
+			return self;
+		}
+	
+	#endregion
+	
+	#region UISprite
+	
+		/// @constructor	UISprite(_id, _x, _y, _width, _height, _sprite, [_starting_frame=0], [_relative_to=UI_RELATIVE_TO.TOP_LEFT], [_time_source_parent=time_source_global])
+		/// @extends		UIWidget
+		/// @description	A Sprite widget to draw a sprite onto
+		/// @param			{String}			_id						The Sprite's name, a unique string ID. If the specified name is taken, the Sprite will be renamed and a message will be displayed on the output log.
+		/// @param			{Real}				_x						The x position of the Sprite, **relative to its parent**, according to the _relative_to parameter
+		/// @param			{Real}				_y						The y position of the Sprite, **relative to its parent**, according to the _relative_to parameter	
+		/// @param			{Asset.GMSprite}	_sprite					The sprite ID to use for rendering the Sprite
+		/// @param			{Real}				[_width]				The width of the Sprite (by default, the original width) 
+		/// @param			{Real}				[_height]				The height of the Sprite (by default, the original height)
+		/// @param			{Real}				[_starting_frame]		The starting frame index (by default 0)
+		/// @param			{Enum}				[_relative_to]			The position relative to which the Sprite will be drawn. By default, the top left (TOP_LEFT) <br>
+		///																See the [UIWidget](#UIWidget) documentation for more info and valid values.
+		/// @param			{Real}				[_time_source_parent]	The parent of the time source used to animate the sprite (by default, time_source_global)
+		/// @return			{UISprite}									self
+		function UISprite(_id, _x, _y, _sprite, _width=0, _height=0, _starting_frame=0, _relative_to=UI_RELATIVE_TO.TOP_LEFT, _time_source_parent=time_source_global) : __UIWidget(_id, _x, _y, _width, _height, _sprite, _relative_to) constructor {
+			#region Private variables
+				self.__type = UI_TYPE.SPRITE;	
+				self.__starting_frame = _starting_frame;
+				self.__image = _starting_frame;
+				self.__animation_step = 1;
+				self.__animation_speed = sprite_get_speed(_sprite);
+				self.__animation_length = sprite_get_number(_sprite);
+				self.__time_source = noone;
+				self.__time_source_parent = _time_source_parent;
+				self.__num_frames = 0;
+			#endregion
+			#region Setters/Getters
+			
+				/// @method				getAnimationStep()
+				/// @description		Gets the number of frames advanced each animation time
+				///	@return				{Real}	the number of frames advanced each time
+				self.getAnimationStep = function()				{ return self.__animation_step; }
+			
+				/// @method				setAnimationStep(_step)
+				/// @description		Sets the number of frames advanced each animation time
+				/// @param				{Real}	_step	the number of frames advanced each time
+				/// @return				{UISprite}	self
+				self.setAnimationStep = function(_step)			{ self.__animation_step = _step; return self; }
+				
+				/// @method				getAnimationSpeed()
+				/// @description		Gets the animation speed of the sprite (as handled by the UI library).
+				///	@return				{Real}	the animation speed
+				self.getAnimationSpeed = function()				{ return self.__animation_speed; }
+			
+				/// @method				setAnimationSpeed(_speed, [_units = time_source_units_frames], [_start=true])
+				/// @description		Sets the animation speed of the sprite (as handled by the UI library). This will NOT modify the actual sprite speed (e.g. by using `sprite_set_speed`).
+				/// @param				{Real}	_speed	the animation speed
+				/// @param				{Real}	[_units] the animation units (by default, frames), according to the time_source_units_* constants
+				/// @param				{Bool}	[_start] whether to automatically start the animation (by default, true)
+				/// @return				{UISprite}	self
+				self.setAnimationSpeed = function(_speed, _units = time_source_units_frames, _start=true) {
+					self.__animation_speed = _speed;
+					if (_speed > 0)	{
+						if (time_source_exists(self.__time_source))	time_source_destroy(self.__time_source);
+						self.__time_source = time_source_create(self.__time_source_parent, self.__animation_speed, _units, function() {							
+							self.__image += self.__animation_step;
+							if (self.__image < 0)	self.__image = sprite_get_number(self.__sprite) + self.__image;
+							else if (self.__image > sprite_get_number(self.__sprite))	self.__image = self.__image % sprite_get_number(self.__sprite);							
+							self.__num_frames++;
+							if (self.__num_frames == self.__animation_length) {
+								self.__image = self.__starting_frame;
+								self.__num_frames = 0;
+							}
+						}, [], -1);						
+						if (_start)	time_source_start(self.__time_source);
+					}
+					return self;
+				}
+				
+				/// @method				getAnimationLength()
+				/// @description		Gets the number of frames to consider in the animation
+				///	@return				{Real}	the number of frames to consider
+				self.getAnimationLength = function()				{ return self.__animation_length; }
+			
+				/// @method				setAnimationLength(_length)
+				/// @description		Sets the number of frames to consider in the animation
+				/// @param				{Real}	_length	the number of frames to consider
+				/// @return				{UISprite}	self
+				self.setAnimationLength = function(_length)			{ self.__animation_length = _length; return self; }
+				
+			#endregion
+			#region Methods
+				
+				/// @method				animationStart()
+				/// @description		Starts the animation of the sprite				
+				/// @return				{UISprite}	self
+				self.animationStart = function() {
+					if (time_source_get_state(self.__time_source) != time_source_state_active) time_source_start(self.__time_source);					
+					return self;
+				}
+				
+				/// @method				animationPause()
+				/// @description		Pauses the animation of the sprite				
+				/// @return				{UISprite}	self
+				self.animationPause = function() {
+					if (time_source_get_state(self.__time_source) == time_source_state_active) time_source_pause(self.__time_source);					
+					return self;
+				}
+				
+				/// @method				animationRestart()
+				/// @description		Restarts the animation of the sprite				
+				/// @return				{UISprite}	self
+				self.animationRestart = function() {
+					self.__image = self.__starting_frame;
+					self.setAnimationSpeed(self.__animation_speed);
+					return self;
+				}
+				
+				self.__draw = function() {
+					if (self.__dimensions.width == 0) {
+						self.setDimensions(,, sprite_exists(self.__sprite) ? sprite_get_width(self.__sprite) : 0);
+					}
+					if (self.__dimensions.height == 0) {
+						self.setDimensions(,,, sprite_exists(self.__sprite) ? sprite_get_height(self.__sprite) : 0);
+					}
+					var _x = self.__dimensions.x;
+					var _y = self.__dimensions.y;
+					var _width = self.__dimensions.width * UI.getScale();
+					var _height = self.__dimensions.height * UI.getScale();
+					if (sprite_exists(self.__sprite)) draw_sprite_stretched_ext(self.__sprite, self.__image, _x, _y, _width, _height, self.__image_blend, self.__image_alpha);				
+				}
+				/*self.__generalBuiltInBehaviors = method(self, __builtInBehavior);
+				self.__builtInBehavior = function() {
+					if (self.__events_fired[UI_EVENT.LEFT_CLICK]) 	self.__callbacks[UI_EVENT.LEFT_CLICK]();				
+				}*/
+				
+				self.__parent_destroy = method(self, destroy);
+				self.destroy = function() {
+					if (time_source_exists(self.__time_source))	time_source_destroy(self.__time_source);
+					self.__parent_destroy();
+				}
+			#endregion
+			
+			// Start animation
+			self.setAnimationSpeed(self.__animation_speed);
+			
+			self.__register();
+			return self;
+		}
+	
+	#endregion
+	
+
+#region Parent Structs
+	function None() {}
+	
+	#region	__UIDimensions
+		/// @struct					__UIDimensions(_offset_x, _offset_y, _width, _height,  _id, _relative_to=UI_RELATIVE_TO.TOP_LEFT, _parent=noone, _inherit_width=false, _inherit_height=false)
+		/// @description			Private struct that represents the position and size of a particular Widget<br>
+		///							Apart from the specified offset_x and offset_y, the resulting struct will also have:<br>
+		///							`x`			x coordinate of the `TOP_LEFT` corner of the widget, relative to `SCREEN` (**absolute** coordinates). These will be used to draw the widget on screen and perform the event handling checks.<br>
+		///							`y`			y coordinate of the `TOP_LEFT` corner of the widget, relative to `SCREEN` (**absolute** coordinates). These will be used to draw the widget on screen and perform the event handling checks.<br>
+		///							`x_parent`	x coordinate of the `TOP_LEFT` corner of the widget, relative to `PARENT` (**relative** coordinates). These will be used to draw the widget inside other widgets which have the `clipContents` property enabled (e.g. scrollable panels or other scrollable areas).<br>
+		///							`y_parent`	y coordinate of the `TOP_LEFT` corner of the widget, relative to `PARENT` (**relative** coordinates). These will be used to draw the widget inside other widgets which have the `clipContents` property enabled (e.g. scrollable panels or other scrollable areas).
+		///	@param					{Real}		_offset_x			Amount of horizontal pixels to move, starting from the `_relative_to` corner, to set the x position. Can be negative as well.
+		///															This is NOT the x position of the top left corner (except if `_relative_to` is `TOP_LEFT`), but rather the x position of the corresponding corner.
+		///	@param					{Real}		_offset_y			Amount of vertical pixels to move, starting from the `_relative_to` corner, to set the y position. Can be negative as well.
+		///															This is NOT the y position of the top corner (except if `_relative_to` is `TOP_LEFT`), but rather the y position of the corresponding corner.
+		///	@param					{Real}		_width				Width of widget
+		///	@param					{Real}		_height				Height of widget
+		///	@param					{UIWidget}	_id					ID of the corresponing widget
+		///	@param					{Enum}		[_relative_to]		Relative to, according to `UI_RELATIVE_TO` enum
+		///	@param					{UIWidget}	[_parent]			Reference to the parent, or noone		
+		///	@param					{UIWidget}	[_inherit_width]	Whether the widget inherits its width from its parent
+		///	@param					{UIWidget}	[_inherit_height]	Whether the widget inherits its height from its parent
+		function __UIDimensions(_offset_x, _offset_y, _width, _height, _id, _relative_to=UI_RELATIVE_TO.TOP_LEFT, _parent=noone, _inherit_width=false, _inherit_height=false) constructor {
+			self.widget_id = _id;
+			self.relative_to = _relative_to;
+			self.offset_x = _offset_x;
+			self.offset_y = _offset_y;
+			self.width = _width;
+			self.height = _height;
+			self.inherit_width = _inherit_width;
+			self.inherit_height = _inherit_height;
+			self.parent = noone;
+		
+			// These values are ALWAYS the coordinates of the top-left corner, irrespective of the relative_to value
+			self.x = 0;
+			self.y = 0;
+			self.relative_x = 0;
+			self.relative_y = 0;
+		
+			/// @method			calculateCoordinates()
+			/// @description	computes the relative and absolute coordinates, according to the set parent		
+			self.calculateCoordinates = function() {
+				// Get parent x,y SCREEN TOP-LEFT coordinates and width,height (if no parent, use GUI size)
+				var _parent_x = 0;
+				var _parent_y = 0;
+				var _parent_w = display_get_gui_width();
+				var _parent_h = display_get_gui_height();
+				if (self.parent != noone) {
+					_parent_x = self.parent.__dimensions.x;
+					_parent_y = self.parent.__dimensions.y;
+					_parent_w = self.parent.__dimensions.width;
+					_parent_h = self.parent.__dimensions.height;
+				}
+				// Inherit width/height
+				if (self.inherit_width)		self.width = _parent_w;
+				if (self.inherit_height)	self.height = _parent_h;
+				// Calculate the starting point
+				var _starting_point_x = _parent_x;
+				var _starting_point_y = _parent_y;
+				if (self.relative_to == UI_RELATIVE_TO.TOP_CENTER || self.relative_to == UI_RELATIVE_TO.MIDDLE_CENTER || self.relative_to == UI_RELATIVE_TO.BOTTOM_CENTER) {
+					_starting_point_x += _parent_w/2;
+				}
+				else if (self.relative_to == UI_RELATIVE_TO.TOP_RIGHT || self.relative_to == UI_RELATIVE_TO.MIDDLE_RIGHT || self.relative_to == UI_RELATIVE_TO.BOTTOM_RIGHT) {
+					_starting_point_x += _parent_w;
+				}
+				if (self.relative_to == UI_RELATIVE_TO.MIDDLE_LEFT || self.relative_to == UI_RELATIVE_TO.MIDDLE_CENTER || self.relative_to == UI_RELATIVE_TO.MIDDLE_RIGHT) {
+					_starting_point_y += _parent_h/2;
+				}
+				else if (self.relative_to == UI_RELATIVE_TO.BOTTOM_LEFT || self.relative_to == UI_RELATIVE_TO.BOTTOM_CENTER || self.relative_to == UI_RELATIVE_TO.BOTTOM_RIGHT) {
+					_starting_point_y += _parent_h;
+				}
+				// Calculate anchor point
+				var _anchor_point_x = _starting_point_x + self.offset_x;
+				var _anchor_point_y = _starting_point_y + self.offset_y;
+				// Calculate widget TOP_LEFT SCREEN x,y coordinates (absolute)
+				self.x = _anchor_point_x;
+				self.y = _anchor_point_y;
+				if (self.relative_to == UI_RELATIVE_TO.TOP_CENTER || self.relative_to == UI_RELATIVE_TO.MIDDLE_CENTER || self.relative_to == UI_RELATIVE_TO.BOTTOM_CENTER) {
+					self.x -= self.width/2;
+				}
+				else if (self.relative_to == UI_RELATIVE_TO.TOP_RIGHT || self.relative_to == UI_RELATIVE_TO.MIDDLE_RIGHT || self.relative_to == UI_RELATIVE_TO.BOTTOM_RIGHT) {
+					self.x -= self.width;
+				}
+				if (self.relative_to == UI_RELATIVE_TO.MIDDLE_LEFT || self.relative_to == UI_RELATIVE_TO.MIDDLE_CENTER || self.relative_to == UI_RELATIVE_TO.MIDDLE_RIGHT) {
+					self.y -= self.height/2;
+				}
+				else if (self.relative_to == UI_RELATIVE_TO.BOTTOM_LEFT || self.relative_to == UI_RELATIVE_TO.BOTTOM_CENTER || self.relative_to == UI_RELATIVE_TO.BOTTOM_RIGHT) {
+					self.y -= self.height;
+				}
+				// Calculate widget RELATIVE x,y coordinates (relative to parent)
+				self.relative_x = self.x - _parent_x;
+				self.relative_y = self.y - _parent_y;			
+			}
+		
+		
+			/// @method					setParent(_parent)
+			/// @description			sets the parent of the UIDimensions struct, so coordinates can be calculated taking that parent into account.<br>
+			///							Coordinates are automatically updated when set - i.e. [`calculateCoordinates()`](#__UIDimensions.calculateCoordinates) is automatically called.
+			/// @param					{UIWidget}	_parent		the reference to the UIWidget		
+			self.setParent = function(_parent) {
+				self.parent = _parent;
+				// Update screen and relative coordinates with new parent
+				self.calculateCoordinates();
+			}
+		
+			/// @method					set(_offset_x = undefined, _offset_y = undefined, _width = undefined, _height = undefined, _relative_to=undefined)
+			/// @description			sets the values for the struct, with optional parameters
+			///	@param					{Real}		[_offset_x]		Amount of horizontal pixels to move, starting from the `_relative_to` corner, to set the x position. Can be negative as well.
+			///														This is NOT the x position of the top left corner (except if `_relative_to` is `TOP_LEFT`), but rather the x position of the corresponding corner.
+			///	@param					{Real}		[_offset_y]		Amount of vertical pixels to move, starting from the `_relative_to` corner, to set the y position. Can be negative as well.
+			///														This is NOT the y position of the top corner (except if `_relative_to` is `TOP_LEFT`), but rather the y position of the corresponding corner.
+			///	@param					{Real}		[_width]		Width of widget
+			///	@param					{Real}		[_height]		Height of widget				
+			///	@param					{Enum}		[_parent]		Sets the anchor relative to which coordinates are calculated.
+			self.set = function(_offset_x = undefined, _offset_y = undefined, _width = undefined, _height = undefined, _relative_to = undefined) {
+				self.offset_x = _offset_x ?? self.offset_x;
+				self.offset_y = _offset_y ?? self.offset_y;
+				self.relative_to = _relative_to ?? self.relative_to;
+				self.width = _width ?? self.width;
+				self.height = _height ?? self.height;
+				// Update screen and relative coordinates with new parent
+				self.calculateCoordinates();
+			}
+			
+			self.setScrollOffsetH = function(_signed_amount) {
+				self.offset_x = self.offset_x + _signed_amount;
+				// Update screen and relative coordinates with scroll
+				self.calculateCoordinates();
+			}
+			self.setScrollOffsetV = function(_signed_amount) {
+				self.offset_y = self.offset_y + _signed_amount;
+				// Update screen and relative coordinates with scroll
+				self.calculateCoordinates();
+			}
+			
+			self.toString = function() {
+				var _rel;
+				switch (self.relative_to) {
+					case UI_RELATIVE_TO.TOP_LEFT:		_rel = "top left";			break;
+					case UI_RELATIVE_TO.TOP_CENTER:		_rel = "top center";		break;
+					case UI_RELATIVE_TO.TOP_RIGHT:		_rel = "top right";			break;
+					case UI_RELATIVE_TO.MIDDLE_LEFT:	_rel = "middle left";		break;
+					case UI_RELATIVE_TO.MIDDLE_CENTER:	_rel = "middle center";		break;
+					case UI_RELATIVE_TO.MIDDLE_RIGHT:	_rel = "middle right";		break;
+					case UI_RELATIVE_TO.BOTTOM_LEFT:	_rel = "bottom left";		break;
+					case UI_RELATIVE_TO.BOTTOM_CENTER:	_rel = "bottom center";		break;
+					case UI_RELATIVE_TO.BOTTOM_RIGHT:	_rel = "bottom right";		break;
+					default:							_rel = "UNKNOWN";			break;
+				}
+				return self.widget_id.__ID + ": ("+string(self.x)+", "+string(self.y)+") relative to "+_rel+"  width="+string(self.width)+" height="+string(self.height)+
+				" offset provided: "+string(self.offset_x)+","+string(self.offset_y)+
+				"\n	parent: "+(self.parent != noone ? self.parent.__ID + " ("+(string(self.parent.__dimensions.x)+", "+string(self.parent.__dimensions.y)+")   width="+string(self.parent.__dimensions.width)+" height="+string(self.parent.__dimensions.height)) : "no parent");
+			}
+			
+			// Set parent (and calculate screen/relative coordinates) on creation
+			self.setParent(_parent);
+		}	
+	
+	#endregion
+	
+	#region __UIWidget
+	
+		/// @constructor	UIWidget(_id, _offset_x, _offset_y, _width, _height, _sprite, _relative_to=UI_RELATIVE_TO.TOP_LEFT)
+		/// @description	The base class for all ofhter widgets. Should be treated as an
+		///					uninstantiable class / template.
+		/// @param	{String}				_id					The widget's string ID by which it will be referred as.
+		/// @param	{Real}					_offset_x			The x offset position relative to its parent, according to the _relative_to parameter
+		/// @param	{Real}					_offset_y			The y offset position relative to its parent, according to the _relative_to parameter
+		/// @param	{Real}					_width				The width of the widget
+		/// @param	{Real}					_height				The height of the widget
+		/// @param	{Asset.GMSprite}		_sprite				The sprite asset to use for rendering
+		/// @param	{Enum}					[_relative_to]		Anchor position from which to calculate offset, from the UI_RELATIVE enum (default: TOP_LEFT)
+		/// @return	{UIWidget}				self
+		function __UIWidget(_id, _offset_x, _offset_y, _width, _height, _sprite, _relative_to=UI_RELATIVE_TO.TOP_LEFT) constructor {
+			#region Private variables
+				self.__ID = _id;
+				self.__type = -1;
+				self.__dimensions = new __UIDimensions(_offset_x, _offset_y, _width, _height, self, _relative_to, noone, false, false);
+				self.__sprite = _sprite;
+				self.__image = 0;
+				self.__image_alpha = 1;
+				self.__image_blend = c_white;				
+				self.__events_fired_last = array_create(GOOEY_NUM_CALLBACKS, false);
+				self.__events_fired = array_create(GOOEY_NUM_CALLBACKS, false);
+				self.__callbacks = array_create(GOOEY_NUM_CALLBACKS, None);
+				self.__parent = noone;
+				self.__children = [];
+				//self.__builtInBehavior = None;			
+				self.__visible = true;
+				self.__enabled = true;
+				self.__draggable = false;
+				self.__resizable = false;
+				self.__resize_border_width = 0;
+				self.__drag_bar_height = self.__dimensions.height;
+				self.__clips_content = false;
+				self.__surface_id = noone;
+				self.__min_width = 1;
+				self.__min_height = 1;
+				self.__user_data = {};
+				self.__binding = undefined;
+				self.__cumulative_horizontal_scroll_offset = [0];
+				self.__cumulative_vertical_scroll_offset = [0];
+				self.__pre_render_callback = None;
+				self.__post_render_callback = None;
+			#endregion
+			#region Setters/Getters
+				/// @method				getID()
+				/// @description		Getter for the widget's string ID
+				/// @returns			{string} The widget's string ID
+				self.getID = function()					{ return self.__ID; }
+			
+				/// @method				getType()
+				/// @description		Getter for the widget's type
+				/// @returns			{Enum}	The widget's type, according to the UI_TYPE enum			
+				self.getType = function()					{ return self.__type; }
+			
+				/// @method				getDimensions()
+				/// @description		Gets the UIDimensions object for this widget
+				/// @returns			{UIDimensions}	The dimensions object. See [`UIDimensions`](#__UIDimensions).
+				self.getDimensions = function()			{ return self.__dimensions; }
+			
+				/// @method						setDimensions()
+				/// @description				Sets the UIDimensions object for this widget, with optional parameters.
+				/// @param	{Real}				[_offset_x]			The x offset position relative to its parent, according to the _relative_to parameter
+				/// @param	{Real}				[_offset_y]			The y offset position relative to its parent, according to the _relative_to parameter
+				/// @param	{Real}				[_width]			The width of the widget
+				/// @param	{Real}				[_height]			The height of the widget			
+				/// @param	{Enum}				[_relative_to]		Anchor position from which to calculate offset, from the UI_RELATIVE enum (default: TOP_LEFT)
+				/// @param	{UIWidget}			[_parent]			Parent Widget reference
+				/// @return						{UIWidget}	self
+				self.setDimensions = function(_offset_x = undefined, _offset_y = undefined, _width = undefined, _height = undefined, _relative_to = undefined, _parent = undefined)	{
+					self.__dimensions.set(_offset_x, _offset_y, _width, _height, _relative_to, _parent);					
+					self.__updateChildrenPositions();
+					return self;
+				}
+				
+				/// @method				getInheritWidth()
+				/// @description		Gets whether the widget inherits its width from its parent.
+				/// @returns			{Bool}	Whether the widget inherits its width from its parent
+				self.getInheritWidth = function()						{ return self.__dimensions.inherit_width; }
+				
+				/// @method				setInheritWidth(_inherit_width)
+				/// @description		Sets whether the widget inherits its width from its parent.
+				/// @param				{Bool}	_inherit_width	Whether the widget inherits its width from its parent
+				/// @return				{UIWidget}	self
+				self.setInheritWidth = function(_inherit_width) { 
+					self.__dimensions.inherit_width = _inherit_width; 
+					self.__dimensions.calculateCoordinates();
+					self.__updateChildrenPositions();
+					return self;
+				}
+				
+				/// @method				getInheritHeight()
+				/// @description		Gets whether the widget inherits its height from its parent.
+				/// @returns			{Bool}	Whether the widget inherits its height from its parent
+				self.getInheritHeight = function()					{ return self.__dimensions.inherit_height; }
+				
+				/// @method				setInheritHeight(_inherit_height)
+				/// @description		Sets whether the widget inherits its height from its parent.
+				/// @param				{Bool}	_inherit_height Whether the widget inherits its height from its parent
+				/// @return				{UIWidget}	self
+				self.setInheritHeight = function(_inherit_height)	{ 
+					self.__dimensions.inherit_height = _inherit_height;
+					self.__dimensions.calculateCoordinates();
+					self.__updateChildrenPositions();
+					return self;
+				}
+				
+				/// @method				getSprite(_sprite)
+				/// @description		Get the sprite ID to be rendered
+				/// @return				{Asset.GMSprite}	The sprite ID
+				self.getSprite = function()				{ return self.__sprite; }
+			
+				/// @method				setSprite(_sprite)
+				/// @description		Sets the sprite to be rendered
+				/// @param				{Asset.GMSprite}	_sprite		The sprite ID
+				/// @return				{UIWidget}	self
+				self.setSprite = function(_sprite)		{ self.__sprite = _sprite; return self; }
+			
+				/// @method				getImage()
+				/// @description		Gets the image index of the Widget
+				/// @return				{Real}	The image index of the Widget
+				self.getImage = function()				{ return self.__image_; }
+			
+				/// @method				setImage(_image)
+				/// @description		Sets the image index of the Widget
+				/// @param				{Real}	_image	The image index
+				/// @return				{UIWidget}	self
+				self.setImage = function(_image)			{ self.__image = _image; return self; }
+				
+				/// @method				getImageBlend()
+				/// @description		Gets the image blend of the Widget's sprite
+				/// @return				{Constant.Color}	The image blend
+				self.getImageBlend = function()			{ return self.__image_blend; }
+			
+				/// @method				setImageBlend(_color)
+				/// @description		Sets the image blend of the Widget
+				/// @param				{Constant.Color}	_color	The image blend
+				/// @return				{UIWidget}	self
+				self.setImageBlend = function(_color)		{ self.__image_blend = _color; return self; }
+				
+				/// @method				getImageAlpha()
+				/// @description		Gets the image alpha of the Widget's sprite
+				/// @return				{Real}	The image alpha
+				self.getImageAlpha = function()			{ return self.__image_alpha; }
+			
+				/// @method				setImageAlpha(_color)
+				/// @description		Sets the image alpha of the Widget
+				/// @param				{Real}	_alpha	The image alpha
+				/// @return				{UIWidget}	self
+				self.setImageAlpha = function(_alpha)		{ self.__image_alpha = _alpha; return self; }
+				
+				/// @method				getCallback(_callback_type)
+				/// @description		Gets the callback function for a specific callback type, according to the `UI_EVENT` enum
+				/// @param				{Enum}	_callback_type	The callback type
+				/// @return				{Function}	the callback function
+				self.getCallback = function(_callback_type)				{ return self.__callbacks[_callback_type]; }
+			
+				/// @method				setCallback(_callback_type, _callback)
+				/// @description		Sets a callback function for a specific event
+				/// @param				{Enum}	_callback_type	The callback type, according to `UI_EVENT` enum
+				/// @param				{Function}	_callback	The callback function to assign
+				/// @return				{UIWidget}	self
+				self.setCallback = function(_callback_type, _callback)	{ 
+					if (is_callable(_callback)) {
+						self.__callbacks[_callback_type] = is_method(_callback) ? _callback : method(undefined, _callback);
+					}
+					return self;
+				}
+			
+				/// @method				getParent()
+				/// @description		Gets the parent reference of the Widget (also a Widget)			
+				/// @return				{UIWidget}	the parent reference
+				self.getParent = function()				{ return self.__parent; }
+			
+				/// @method				getContainingPanel()
+				/// @description		Gets the reference of the Panel containing this Widget. If this Widget is a Panel, it will return itself.
+				/// @return				{UIPanel}	the parent reference
+				self.getContainingPanel = function() {
+					if (self.__type == UI_TYPE.PANEL)	return self;
+					else if (self.__parent.__type == UI_TYPE.PANEL)	return self.__parent;
+					else return self.__parent.getContainingPanel();
+				}
+				
+				/// @method				getContainingTab()
+				/// @description		Gets the index number of the tab of the Panel containing this Widget. <br>
+				///						If this Widget is a common widget, it will return -1.<br>
+				///						If this Widget is a Panel, it will return undefined;
+				/// @return				{Real}	the tab number
+				self.getContainingTab = function() {					
+					if (self.__type == UI_TYPE.PANEL)	return undefined;
+					else {
+						var _parent_widget = self.__parent;
+						var _target_widget = self;
+						while (_parent_widget.__type != UI_TYPE.PANEL) {
+							_parent_widget = _parent_widget.__parent;
+							_target_widget = _target_widget.__parent;
+						}
+						var _i=0, _n=array_length(_parent_widget.__tabs); 
+						var _found = false;
+						while (_i<_n && !_found) {
+							var _j=0, _m=array_length(_parent_widget.__tabs[_i]);
+							while (_j<_m && !_found) {
+								_found = (_parent_widget.__tabs[_i][_j] == _target_widget);
+								if (!_found) _j++;
+							}
+							if (!_found) _i++; 
+						}
+						if (!_found) { // Must be common controls, return -1 - but calculate it anyway
+							var _k=0; 
+							var _o=array_length(_parent_widget.__common_widgets);
+							var _found_common = false;
+							while (_k<_o && !_found_common) {
+								_found_common = (_parent_widget.__common_widgets[_k] == _target_widget);
+								if (!_found_common) _k++;
+							}
+							if (_found_common)	return -1;
+							else throw("Something REALLY weird happened, the specified control isn't anywhere. Run far, far away");
+						}
+						else {
+							return _i;
+						}
+					}
+				}
+			
+				/// @method				setParent(_parent_id)
+				/// @description		Sets the parent of the Widget. Also calls the `setParent()` method of the corresponding `UIDimensions` struct to recalculate coordinates.
+				/// @param				{UIWidget}	_parent_id	The reference to the parent Widget
+				/// @return				{UIWidget}	self
+				self.setParent = function(_parent_id)		{ 
+					self.__parent = _parent_id;
+					self.__dimensions.setParent(_parent_id);
+					return self;
+				}
+			
+				/// @method				getChildren([_tab=<current tab>])
+				/// @description		Gets the array containing all children of this Widget
+				/// @param				{Real}	[_tab]				Tab to get the controls from. <br>
+				///													If _tab is a nonnegative number, it will get the children from the specified tab.<br>
+				///													If _tab is -1, it will return the common widgets instead.<br>
+				///													If _tab is omitted, it will default to the current tab (or ignored, in case of non-tabbed widgets).
+				/// @return				{Array<UIWidget>}	the array of children Widget references
+				self.getChildren = function(_tab=self.__type == UI_TYPE.PANEL ? self.__current_tab : 0) {
+					if (self.__type == UI_TYPE.PANEL && _tab != -1)			return self.__tabs[_tab];
+					else if (self.__type == UI_TYPE.PANEL && _tab == -1)	return self.__common_widgets;
+					else													return self.__children;
+				}
+			
+				/// @method				setChildren(_children, [_tab=<current tab>])
+				/// @description		Sets the children Widgets to a new array of Widget references
+				/// @param				{Array<UIWidget>}	_children	The array containing the references of the children Widgets
+				/// @param				{Real}				[_tab]		Tab to set the controls for. <br>
+				///														If _tab is a nonnegative number, it will set the children of the specified tab.<br>
+				///														If _tab is -1, it will set the common widgets instead.<br>
+				///														If _tab is omitted, it will default to the current tab (or ignored, in case of non-tabbed widgets).				
+				/// @return				{UIWidget}	self
+				self.setChildren = function(_children, _tab = self.__type == UI_TYPE.PANEL ? self.__current_tab : 0) {
+					if (self.__type == UI_TYPE.PANEL && _tab != -1)			self.__tabs[_tab] = _children;
+					else if (self.__type == UI_TYPE.PANEL && _tab == -1)	self.__common_widgets = _children;
+					else													self.__children = _children; 
+					return self;
+				}
+			
+				/// @method				getVisible()
+				/// @description		Gets the visible state of a Widget
+				/// @return				{Bool}	whether the Widget is visible or not
+				self.getVisible = function()				{ return self.__visible; }
+			
+				/// @method				setVisible(_visible)
+				/// @description		Sets the visible state of a Widget
+				/// @param				{Bool}	_visible	Whether to set visibility to true or false			
+				/// @return				{UIWidget}	self
+				self.setVisible = function(_visible)		{
+					self.__visible = _visible; 
+					for (var _i=0, _n=array_length(self.__children); _i<_n; _i++) {
+						self.__children[_i].setVisible(_visible);
+					}
+					return self;
+				}
+			
+				/// @method				getEnabled()
+				/// @description		Gets the enabled state of a Widget
+				/// @return				{Bool}	whether the Widget is enabled or not
+				self.getEnabled = function()				{ return self.__enabled; }
+			
+				/// @method				setEnabled(_enabled)
+				/// @description		Sets the enabled state of a Widget
+				/// @param				{Bool}	_enabled	Whether to set enabled to true or false			
+				/// @return				{UIWidget}	self			
+				self.setEnabled = function(_enabled)		{
+					self.__enabled = _enabled;
+					for (var _i=0, _n=array_length(self.__children); _i<_n; _i++) {
+						self.__children[_i].setEnabled(_enabled);
+					}
+					return self;
+				}
+			
+				/// @method				getDraggable()
+				/// @description		Gets the draggable state of a Widget
+				/// @return				{Bool}	whether the Widget is draggable or not
+				self.getDraggable = function()			{ return self.__draggable; }
+			
+				/// @method				setDraggable(_draggable)
+				/// @description		Sets the draggable state of a Widget
+				/// @param				{Bool}	_draggable	Whether to set draggable to true or false			
+				/// @return				{UIWidget}	self
+				self.setDraggable = function(_draggable)	{ self.__draggable = _draggable; return self; }
+			
+				/// @method				getResizable()
+				/// @description		Gets the resizable state of a Widget
+				/// @return				{Bool}	whether the Widget is resizable or not
+				self.getResizable = function()			{ return self.__resizable; }
+			
+				/// @method				setResizable(_resizable)
+				/// @description		Sets the resizable state of a Widget
+				/// @param				{Bool}	_resizable	Whether to set resizable to true or false			
+				/// @return				{UIWidget}	self
+				self.setResizable = function(_resizable)	{ self.__resizable = _resizable; return self; }
+								
+				/// @method				getResizeBorderWidth()
+				/// @description		Gets the width of the border of a Widget that enables resizing
+				/// @return				{Real}	the width of the border in px
+				self.getResizeBorderWidth = function()		{ return self.__resize_border_width; }
+			
+				/// @method				setResizeBorderWidth(_resizable)
+				/// @description		Sets the resizable state of a Widget
+				/// @param				{Real}	_border_width	The width of the border in px
+				/// @return				{UIWidget}	self
+				self.setResizeBorderWidth = function(_border_width)		{ self.__resize_border_width = _border_width; return self; }
+			
+				/// @method				getClipsContent()
+				/// @description		Gets the Widget's masking/clipping state
+				/// @return				{Bool}	Whether the widget clips its content or not.
+				self.getClipsContent = function()			{ return self.__clips_content; }
+			
+				/// @method				setClipsContent(_clips)
+				/// @description		Sets the Widget's masking/clipping state.<br>
+				///						Note this method automatically creates/frees the corresponding surfaces.
+				/// @param				{Bool}	_clips	Whether the widget clips its content or not.
+				/// @return				{UIWidget}	self
+				self.setClipsContent = function(_clips) {
+					self.__clips_content = _clips;
+					if (_clips) {
+						if (!surface_exists(self.__surface_id))	self.__surface_id = surface_create(display_get_gui_width(), display_get_gui_height());
+					}
+					else {
+						if (surface_exists(self.__surface_id))	surface_free(self.__surface_id);
+						self.__surface_id = noone;
+					}
+					return self;
+				}	
+				
+				/// @method				getUserData(_name)
+				/// @description		Gets the user data element named `_name`.
+				/// @param				{String}	_name	the name of the data element
+				/// @return				{String}	The user data value for the specified name, or an empty string if it doesn't exist
+				self.getUserData = function(_name) {
+					if (variable_struct_exists(self.__user_data, _name)) {
+						return variable_struct_get(self.__user_data, _name);
+					}
+					else {
+						UI.__logMessage("Cannot find data element with name '"+_name+"' in widget '"+self.__ID+"', returning blank string", UI_MESSAGE_LEVEL.WARNING);
+						return "";
+					}
+				}
+				
+				/// @method				setUserData(_name, _value)
+				/// @description		Sets the user data element named `_name`.
+				/// @param				{String}	_name	the name of the data element
+				/// @param				{Any}		_value	the value to set
+				/// @return				{UIWidget}	self
+				self.setUserData = function(_name, _value) {
+					variable_struct_set(self.__user_data, _name, _value);
+					return self;
+				}
+				
+				/// @method				getBinding()
+				/// @description		Returns the previously defined object instance or struct variable/method binding.
+				/// @return				{Struct}	A struct containing the object or struct ID and the variable or function name that is bound.
+				self.getBinding = function() {
+					return self.__binding;
+				}
+				
+				/// @method				setBinding(_name, _object_or_struct_ref, _variable_name)
+				/// @description		Defines the binding for the defined object or struct reference and the corresponding variable or method name.<br>
+				///						The handle of the binding itself is dependent on the specific Widget.
+				/// @param				{Struct||Instance.ID}	_object_or_struct_ref		the object or struct reference
+				/// @param				{String}				_variable_or_function_name	the name of the variable or method to bind
+				/// @return				{UIWidget}	self
+				self.setBinding = function(_object_or_struct_ref, _variable_or_method_name) {
+					self.__binding = { struct_or_object: _object_or_struct_ref, variable_or_method_name: _variable_or_method_name};
+					return self;
+				}
+				
+				/// @method				clearBinding()
+				/// @description		Unsets/clears the data binding.
+				/// @return				{UIWidget}	self
+				self.clearBinding = function() {
+					self.__binding = undefined;
+					return self;
+				}
+				
+				/// @method				getPreRenderCallback()
+				/// @description		Gets the pre-render callback function set.<br>
+				///						NOTE: The pre-render event will run regardless of whether the control is visible/enabled.
+				/// @return				{Function}	the callback function
+				self.getPreRenderCallback = function()				{ return self.__pre_render_callback; }
+			
+				/// @method				setPreRenderCallback(_function)
+				/// @description		Sets a callback function for pre-render.<br>
+				///						NOTE: The pre-render event will run regardless of whether the control is visible/enabled.
+				/// @param				{Function}	_function	The callback function to assign
+				/// @return				{UIWidget}	self
+				self.setPreRenderCallback = function(_function)	{ self.__pre_render_callback = _function; return self; }
+				
+				/// @method				getPostRenderCallback()
+				/// @description		Gets the post-render callback function set.<br>
+				///						NOTE: The pre-render event will run regardless of whether the control is visible/enabled.
+				/// @return				{Function}	the callback function
+				self.getPostRenderCallback = function()				{ return self.__post_render_callback; }
+			
+				/// @method				setPostRenderCallback(_function)
+				/// @description		Sets a callback function for post-render.<br>
+				///						NOTE: The pre-render event will run regardless of whether the control is visible/enabled.
+				/// @param				{Function}	_function	The callback function to assign
+				/// @return				{UIWidget}	self
+				self.setPostRenderCallback = function(_function)	{ self.__post_render_callback = _function; return self; }
+								
+			#endregion
+			#region Methods
+			
+				#region Private
+					
+					// Get the value of the bound variable or function					
+					self.__updateBinding = function() {
+						if (!is_undefined(self.__binding)) {
+							var _struct_or_object_name = self.__binding.struct_or_object;
+							var _variable = self.__binding.variable_or_method_name;
+							if (is_struct(_struct_or_object_name))			return variable_struct_get(_struct_or_object_name, _variable);
+							else if (instance_exists(_struct_or_object_name)) && variable_instance_exists(_struct_or_object_name, _variable) {
+								return variable_instance_get(_struct_or_object_name, _variable);
+							}
+							else {
+								UI.__logMessage("Cannot find object instance or struct ("+string(_struct_or_object_name)+") and/or corresponding variable or method ("+_variable+"), previously bound in widget '"+self.__ID+"', returning undefined", UI_MESSAGE_LEVEL.INFO);
+								return undefined;
+							}
+						}
+						else {
+							//UI.__logMessage("Binding is undefined in widget '"+self.__ID+"', returning undefined", UI_MESSAGE_LEVEL.WARNING);
+							return undefined;
+						}
+						
+					}
+					
+					self.__register = function() {
+						if (instance_exists(UI)) UI.__register(self);
+						else throw("ERROR: UI manager object is not imported. Drag the UI manager object to your first room and make sure it's created before any other objects using UI, with Instance Creation Order.");
+					}
+			
+					self.__updateChildrenPositions = function() {
+						
+						if (self.__type == UI_TYPE.PANEL) {
+							for (var _j=0, _m=array_length(self.__tabs); _j<_m; _j++) {
+								for (var _i=0, _n=array_length(self.__tabs[_j]); _i<_n; _i++) {
+									self.__tabs[_j][_i].__dimensions.calculateCoordinates();
+									self.__tabs[_j][_i].__updateChildrenPositions();
+								}
+							}
+							// Update common widgets as well
+							for (var _i=0, _n=array_length(self.__common_widgets); _i<_n; _i++) {
+								self.__common_widgets[_i].__dimensions.calculateCoordinates();
+								self.__common_widgets[_i].__updateChildrenPositions();
+							}	
+						}
+						else {
+							for (var _i=0, _n=array_length(self.__children); _i<_n; _i++) {
+								self.__children[_i].__dimensions.calculateCoordinates();								
+								self.__children[_i].__updateChildrenPositions();							
+							}
+							if (self.__type == UI_TYPE.GRID) self.__updateGridDimensions();
+						}
+					}
+			
+					self.__render = function() {
+						// Pre-render
+						self.__pre_render_callback();
+						
+						if (self.__visible) {							
+							// Draw this widget
+							self.__draw();
+							
+							if (self.__clips_content) {
+								if (!surface_exists(self.__surface_id)) self.__surface_id = surface_create(display_get_gui_width(), display_get_gui_height());
+								surface_set_target(self.__surface_id);
+								draw_clear_alpha(c_black, 0);
+							}
+										
+							// Render children
+							for (var _i=0, _n=array_length(self.__children); _i<_n; _i++)	self.__children[_i].__render();
+							// Render common items
+							if (self.__type == UI_TYPE.PANEL) {
+								for (var _i=0, _n=array_length(self.__common_widgets); _i<_n; _i++)	self.__common_widgets[_i].__render();
+							}
+					
+							if (self.__clips_content) {						
+								surface_reset_target();
+								// The surface needs to be drawn with screen coords
+								draw_surface_part(self.__surface_id, self.__dimensions.x, self.__dimensions.y, self.__dimensions.width * UI.getScale(), self.__dimensions.height * UI.getScale(), self.__dimensions.x, self.__dimensions.y);
+							}
+						}
+						
+						// Post-render
+						self.__post_render_callback();
+					}
+			
+					self.__processMouseover = function() {
+						if (self.__visible && self.__enabled)	self.__events_fired[UI_EVENT.MOUSE_OVER] = point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), self.__dimensions.x, self.__dimensions.y, self.__dimensions.x + self.__dimensions.width * UI.getScale(), self.__dimensions.y + self.__dimensions.height * UI.getScale());
+					}
+					
+					self.__clearEvents = function(_clear_enter_exit=true) {
+						for (var _i=0; _i<GOOEY_NUM_CALLBACKS; _i++)	{
+							if (_clear_enter_exit || !_clear_enter_exit && _i != UI_EVENT.MOUSE_ENTER && _i != UI_EVENT.MOUSE_EXIT) self.__events_fired[_i] = false;
+						}
+					}
+				
+					self.__processEvents = function() {
+						array_copy(self.__events_fired_last, 0, self.__events_fired, 0, GOOEY_NUM_CALLBACKS);
+						
+						self.__clearEvents();
+						
+						if (self.__visible && self.__enabled) {
+							self.__processMouseover();
+							self.__events_fired[UI_EVENT.LEFT_CLICK] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button_pressed(UI.getMouseDevice(), mb_left);
+							self.__events_fired[UI_EVENT.MIDDLE_CLICK] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button_pressed(UI.getMouseDevice(), mb_middle);
+							self.__events_fired[UI_EVENT.RIGHT_CLICK] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button_pressed(UI.getMouseDevice(), mb_right);
+							self.__events_fired[UI_EVENT.LEFT_HOLD] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button(UI.getMouseDevice(), mb_left);
+							self.__events_fired[UI_EVENT.MIDDLE_HOLD] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button(UI.getMouseDevice(), mb_middle);
+							self.__events_fired[UI_EVENT.RIGHT_HOLD] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button(UI.getMouseDevice(), mb_right);
+							self.__events_fired[UI_EVENT.LEFT_RELEASE] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button_released(UI.getMouseDevice(), mb_left);
+							self.__events_fired[UI_EVENT.MIDDLE_RELEASE] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button_released(UI.getMouseDevice(), mb_middle);
+							self.__events_fired[UI_EVENT.RIGHT_RELEASE] = self.__events_fired[UI_EVENT.MOUSE_OVER] && device_mouse_check_button_released(UI.getMouseDevice(), mb_right);
+							self.__events_fired[UI_EVENT.MOUSE_ENTER] = !self.__events_fired_last[UI_EVENT.MOUSE_OVER] && self.__events_fired[UI_EVENT.MOUSE_OVER];
+							self.__events_fired[UI_EVENT.MOUSE_EXIT] = self.__events_fired_last[UI_EVENT.MOUSE_OVER] && !self.__events_fired[UI_EVENT.MOUSE_OVER];
+							self.__events_fired[UI_EVENT.MOUSE_WHEEL_UP] = self.__events_fired[UI_EVENT.MOUSE_OVER] && mouse_wheel_up();
+							self.__events_fired[UI_EVENT.MOUSE_WHEEL_DOWN] = self.__events_fired[UI_EVENT.MOUSE_OVER] && mouse_wheel_down();
+							
+							
+							// Calculate 3x3 "grid" on the panel, based off on screen coords, that will determine what drag action is fired (move or resize)
+							var _w = self.__resize_border_width * UI.getScale();					
+							var _x0 = self.__dimensions.x;
+							var _x1 = _x0 + _w;
+							var _x3 = self.__dimensions.x + self.__dimensions.width * UI.getScale();
+							var _x2 = _x3 - _w;
+							var _y0 = self.__dimensions.y;
+							var _y1 = _y0 + _w;
+							var _y3 = self.__dimensions.y + self.__dimensions.height * UI.getScale();
+							var _y2 = _y3 - _w;
+					
+							// Determine mouse cursors for mouseover
+							if (self.__events_fired[UI_EVENT.MOUSE_OVER]) {
+								var _y1drag = self.__drag_bar_height == self.__dimensions.height ? _y2 : _y1 + self.__drag_bar_height;								
+								if		(self.__resizable && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x0, _y0, _x1, _y1))		UI.__setUICursor(UI_CURSOR_SIZE_NWSE);
+								else if (self.__resizable && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x2, _y0, _x3, _y1))		UI.__setUICursor(UI_CURSOR_SIZE_NESW);
+								else if (self.__resizable && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x0, _y2, _x1, _y3))		UI.__setUICursor(UI_CURSOR_SIZE_NESW);
+								else if (self.__resizable && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x2, _y2, _x3, _y3))		UI.__setUICursor(UI_CURSOR_SIZE_NWSE);
+								else if (self.__resizable && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x0, _y0, _x3, _y1))		UI.__setUICursor(UI_CURSOR_SIZE_NS);
+								else if (self.__resizable && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x2, _y0, _x3, _y3))		UI.__setUICursor(UI_CURSOR_SIZE_WE);
+								else if (self.__resizable && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x0, _y2, _x3, _y3))		UI.__setUICursor(UI_CURSOR_SIZE_NS);
+								else if (self.__resizable && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x0, _y0, _x1, _y3))		UI.__setUICursor(UI_CURSOR_SIZE_WE);
+								else if (((self.__type == UI_TYPE.PANEL && self.__movable) || (self.__type != UI_TYPE.PANEL && self.__draggable)) && point_in_rectangle(device_mouse_x_to_gui(UI.getMouseDevice()), device_mouse_y_to_gui(UI.getMouseDevice()), _x1, _y1, _x2, _y1drag))	UI.__setUICursor(UI_CURSOR_DRAG);
+							}
+					
+							if (self.__isDragStart())	{
+								// Determine drag actions for left hold
+								var _y1drag = self.__drag_bar_height == self.__dimensions.height ? _y2 : _y1 + self.__drag_bar_height;								
+								if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x0, _y0, _x1, _y1))			UI.__drag_data.__drag_action = UI_RESIZE_DRAG.RESIZE_NW; 
+								else if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x2, _y0, _x3, _y1))		UI.__drag_data.__drag_action = UI_RESIZE_DRAG.RESIZE_NE; 
+								else if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x0, _y2, _x1, _y3))		UI.__drag_data.__drag_action = UI_RESIZE_DRAG.RESIZE_SW; 
+								else if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x2, _y2, _x3, _y3))		UI.__drag_data.__drag_action = UI_RESIZE_DRAG.RESIZE_SE; 
+								else if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x0, _y0, _x3, _y1))		UI.__drag_data.__drag_action = UI_RESIZE_DRAG.RESIZE_N;	 
+								else if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x2, _y0, _x3, _y3))		UI.__drag_data.__drag_action = UI_RESIZE_DRAG.RESIZE_E;	 
+								else if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x0, _y2, _x3, _y3))		UI.__drag_data.__drag_action = UI_RESIZE_DRAG.RESIZE_S;	 
+								else if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x0, _y0, _x1, _y3))		UI.__drag_data.__drag_action = UI_RESIZE_DRAG.RESIZE_W;	 
+								else if (point_in_rectangle(UI.__drag_data.__drag_mouse_delta_x, UI.__drag_data.__drag_mouse_delta_y, _x1, _y1, _x2, _y1drag))	UI.__drag_data.__drag_action = UI_RESIZE_DRAG.DRAG;
+								else 	UI.__drag_data.__drag_action = UI_RESIZE_DRAG.NONE;								
+							}
+														
+						}
+					}
+					
+					self.__dragCondition = function() { return true; }
+					
+					self.__dragStart = function() {
+						if (self.__type == UI_TYPE.PANEL)	UI.setFocusedPanel(self.__ID);
+						UI.__currentlyDraggedWidget = self;								
+						UI.__drag_data.__drag_start_x = self.__dimensions.x;
+						UI.__drag_data.__drag_start_y = self.__dimensions.y;
+						UI.__drag_data.__drag_start_width = self.__dimensions.width;
+						UI.__drag_data.__drag_start_height = self.__dimensions.height;
+						UI.__drag_data.__drag_mouse_delta_x = device_mouse_x_to_gui(UI.getMouseDevice());
+						UI.__drag_data.__drag_mouse_delta_y = device_mouse_y_to_gui(UI.getMouseDevice());						
+					}
+					
+					self.__isDragStart = function() {
+						if (UI.__currentlyDraggedWidget == noone && self.__draggable && self.__events_fired[UI_EVENT.LEFT_HOLD] && self.__dragCondition())	{							
+							self.__dragStart();
+							return true;
+						}
+						else return false;
+					}
+					
+					self.__isDragEnd = function() {
+						if (UI.__currentlyDraggedWidget == self && device_mouse_check_button_released(UI.getMouseDevice(), mb_left)) {								
+							UI.__currentlyDraggedWidget = noone;
+							UI.__drag_data.__drag_start_x = -1;
+							UI.__drag_data.__drag_start_y = -1;
+							UI.__drag_data.__drag_start_width = -1;
+							UI.__drag_data.__drag_start_height = -1;
+							UI.__drag_data.__drag_mouse_delta_x = -1;
+							UI.__drag_data.__drag_mouse_delta_y = -1;
+							UI.__drag_data.__drag_action = -1;
+							UI.__drag_data.__drag_specific_start_x = -1;
+							UI.__drag_data.__drag_specific_start_y = -1;
+							UI.__drag_data.__drag_specific_start_width = -1;
+							UI.__drag_data.__drag_specific_start_height = -1;
+							UI.__setUICursor(UI_CURSOR_DEFAULT);
+							return true;
+						}
+						else return false;
+					}
+					
+					self.__builtInBehavior = function(_process_array = array_create(GOOEY_NUM_CALLBACKS, true)) {
+						if (_process_array[UI_EVENT.MOUSE_OVER] && self.__events_fired[UI_EVENT.MOUSE_OVER]) 				self.__callbacks[UI_EVENT.MOUSE_OVER]();
+						if (_process_array[UI_EVENT.LEFT_CLICK] && self.__events_fired[UI_EVENT.LEFT_CLICK]) 				self.__callbacks[UI_EVENT.LEFT_CLICK]();
+						if (_process_array[UI_EVENT.MIDDLE_CLICK] && self.__events_fired[UI_EVENT.MIDDLE_CLICK]) 			self.__callbacks[UI_EVENT.MIDDLE_CLICK]();
+						if (_process_array[UI_EVENT.RIGHT_CLICK] && self.__events_fired[UI_EVENT.RIGHT_CLICK]) 				self.__callbacks[UI_EVENT.RIGHT_CLICK]();
+						if (_process_array[UI_EVENT.LEFT_HOLD] && self.__events_fired[UI_EVENT.LEFT_HOLD]) 					self.__callbacks[UI_EVENT.LEFT_HOLD]();
+						if (_process_array[UI_EVENT.MIDDLE_HOLD] && self.__events_fired[UI_EVENT.MIDDLE_HOLD]) 				self.__callbacks[UI_EVENT.MIDDLE_HOLD]();
+						if (_process_array[UI_EVENT.RIGHT_HOLD] && self.__events_fired[UI_EVENT.RIGHT_HOLD]) 				self.__callbacks[UI_EVENT.RIGHT_HOLD]();
+						if (_process_array[UI_EVENT.LEFT_RELEASE] && self.__events_fired[UI_EVENT.LEFT_RELEASE]) 			self.__callbacks[UI_EVENT.LEFT_RELEASE]();
+						if (_process_array[UI_EVENT.MIDDLE_RELEASE] && self.__events_fired[UI_EVENT.MIDDLE_RELEASE])		self.__callbacks[UI_EVENT.MIDDLE_RELEASE]();
+						if (_process_array[UI_EVENT.RIGHT_RELEASE] && self.__events_fired[UI_EVENT.RIGHT_RELEASE]) 			self.__callbacks[UI_EVENT.RIGHT_RELEASE]();
+						if (_process_array[UI_EVENT.MOUSE_ENTER] && self.__events_fired[UI_EVENT.MOUSE_ENTER]) 				self.__callbacks[UI_EVENT.MOUSE_ENTER]();
+						if (_process_array[UI_EVENT.MOUSE_EXIT] && self.__events_fired[UI_EVENT.MOUSE_EXIT]) 				self.__callbacks[UI_EVENT.MOUSE_EXIT]();
+						if (_process_array[UI_EVENT.MOUSE_WHEEL_UP] && self.__events_fired[UI_EVENT.MOUSE_WHEEL_UP]) 		self.__callbacks[UI_EVENT.MOUSE_WHEEL_UP]();
+						if (_process_array[UI_EVENT.MOUSE_WHEEL_DOWN] && self.__events_fired[UI_EVENT.MOUSE_WHEEL_DOWN])	self.__callbacks[UI_EVENT.MOUSE_WHEEL_DOWN]();					
+						// Handle Value Changed event on the UI object
+					}	
+					
+					self.__drag = function() {}
+					
+				#endregion
+			
+				/// @method				scroll(_orientation, _sign, [_amount = UI_SCROLL_SPEED])
+				/// @description		Scrolls the content of this widget in a particular direction (horizontal/vertical) and sign (negative/positive)
+				/// @param				{Enum}	_orientation	the direction to scroll, as in `UI_ORIENTATION`.
+				/// @param				{Real}	_sign			the sign (-1 or 1)
+				/// @param				{Real}	_amount			the amount to scroll, by default `UI_SCROLL_SPEED`
+				/// @return				{UIWidget}	self
+				self.scroll = function(_orientation, _sign, _amount = UI_SCROLL_SPEED) {
+					var _s = _sign >= 0 ? 1 : -1;
+					var _tab = self.__type == UI_TYPE.PANEL ? self.getCurrentTab() : 0;
+					if (_orientation == UI_ORIENTATION.HORIZONTAL) {
+						self.__cumulative_horizontal_scroll_offset[_tab] += _s * _amount;
+						for (var _i=0, _n=array_length(self.__children); _i<_n; _i++) {							
+							self.__children[_i].__dimensions.setScrollOffsetH(_s * _amount);
+							self.__children[_i].__updateChildrenPositions();
+						}
+					}
+					else {
+						self.__cumulative_vertical_scroll_offset[_tab] += _s * _amount;
+						for (var _i=0, _n=array_length(self.__children); _i<_n; _i++) {
+							self.__children[_i].__dimensions.setScrollOffsetV(_s * _amount);
+							self.__children[_i].__updateChildrenPositions();
+						}
+					}
+				}
+				
+				/// @method				getScrollOffset(_orientation, _value)
+				/// @description		Gets the cumulative scroll offset to a particular number
+				/// @param				{Enum}	_orientation	whether to set the horizontal or vertical offset
+				/// @return				{Real}	the cumulative scroll offset
+				self.getScrollOffset = function(_orientation) {
+					var _tab = self.__type == UI_TYPE.PANEL ? self.getCurrentTab() : 0;
+					return _orientation == UI_ORIENTATION.HORIZONTAL ? self.__cumulative_horizontal_scroll_offset[_tab] : self.__cumulative_vertical_scroll_offset[_tab];
+				}
+				
+				/// @method				setScrollOffset(_orientation, _value)
+				/// @description		Sets the scroll offset to a particular number
+				/// @param				{Enum}	_orientation	whether to set the horizontal or vertical offset
+				/// @param				{Real}	_value			the value to set				
+				/// @return				{UIWidget}	self
+				self.setScrollOffset = function(_orientation, _value) {
+					var _tab = self.__type == UI_TYPE.PANEL ? self.getCurrentTab() : 0;
+					var _current_offset = _orientation == UI_ORIENTATION.HORIZONTAL ? self.__cumulative_horizontal_scroll_offset[_tab] : self.__cumulative_vertical_scroll_offset[_tab];
+					var _amount = abs(_value - _current_offset);
+					var _sign = sign(_value - _current_offset);
+					self.scroll(_orientation, _sign, _amount);			
+				}
+				
+				/// @method				resetScroll(_direction)
+				/// @description		Resets the scrolling offset to 0 in the indicated direction
+				/// @param				{Enum}	_direction	the direction to scroll, as in `UI_ORIENTATION`.				
+				/// @return				{UIWidget}	self
+				self.resetScroll = function(_direction) {
+					var _tab = self.__type == UI_TYPE.PANEL ? self.getCurrentTab() : 0;
+					var _cum = _direction == UI_ORIENTATION.HORIZONTAL ? self.__cumulative_horizontal_scroll_offset[_tab] : self.__cumulative_vertical_scroll_offset[_tab];
+					self.scroll(_direction, -sign(_cum), abs(_cum));
+				}
+					
+				/// @method				add(_id, [_tab = <current_tab>])
+				/// @description		Adds a children Widget to this Widget
+				/// @param				{UIWidget}	_id 	The reference to the children Widget to add
+				/// @param				{Real}	[_tab]				Tab to get the controls from. <br>
+				///													If _tab is a nonnegative number, it will add the children to the specified tab.<br>
+				///													If _tab is -1, it will add the children to the common widgets instead.<br>
+				///													If _tab is omitted, it will default to the current tab (or ignored, in case of non-tabbed widgets).				
+				/// @return				{UIWidget}	The added children Widget. *Note that this does NOT return the current Widget's reference, but rather the children's reference*. This is by design to be able to use `with` in conjunction with this method.
+				self.add = function(_id, _tab = self.__type == UI_TYPE.PANEL ? self.__current_tab : 0) {
+					_id.__parent = self;
+					_id.__dimensions.setParent(self);
+					if (self.__type == UI_TYPE.PANEL && _tab != -1)			array_push(self.__tabs[_tab], _id);					
+					else if (self.__type == UI_TYPE.PANEL && _tab == -1)	array_push(self.__common_widgets, _id);
+					else array_push(self.__children, _id);
+					
+					if (_id.__type == UI_TYPE.GRID) {
+						_id.__updateGridDimensions();
+					}
+					_id.__updateChildrenPositions();
+					return _id;
+				}
+			
+				/// @method				remove(_ID)
+				/// @description		Removes a Widget from the list of children Widget. *Note that this does NOT destroy the Widget*.
+				/// @param				{String}	_ID 	The string ID of the children Widget to delete
+				/// @param				{Real}	[_tab]				Tab to remove the control from. <br>
+				///													If _tab is a nonnegative number, it will add the children to the specified tab.<br>
+				///													If _tab is -1, it will add the children to the common widgets instead.<br>
+				///													If _tab is omitted, it will default to the current tab (or ignored, in case of non-tabbed widgets).				
+				/// @return				{Bool}				Whether the Widget was found (and removed from the list of children) or not.<br>
+				///											NOTE: If tab was specified, it will return `false` if the control was not found on the specified tab, regardless of whether it exists on other tabs, or on the common widget-
+				self.remove = function(_ID, _tab = self.__type == UI_TYPE.PANEL ? self.__current_tab : 0) {
+					var _array;
+					if (self.__type == UI_TYPE.PANEL && _tab != -1)			_array = self.__tabs[_tab];
+					else if (self.__type == UI_TYPE.PANEL && _tab == -1)	_array = self.__common_widgets;
+					else													_array = self.__children;
+					
+					var _i=0; 
+					var _n = array_length(_array);
+					var _found = false;
+					while (_i<_n && !_found) {
+						if (_array[_i].__ID == _ID) {
+							array_delete(_array, _i, 1);
+							_found = true;						
+						}
+						else {
+							_i++
+						}					
+					}
+					return _found;
+				}
+			
+			
+				/// @method				getDescendants()
+				/// @description		Gets an array containing all descendants (children, grandchildren etc.) of this Widget.<br>
+				///						If widget is a Panel, gets all descendants of the current tab, including common widgets for a Panel
+				/// @return				{Array<UIWidget>}	the array of descendant Widget references
+				self.getDescendants = function() {
+					var _n_children = array_length(self.getChildren());					
+					//var _a = array_create(_n_children + _n_common);					
+					var _a = [];
+					array_copy(_a, 0, self.getChildren(), 0, _n_children); 
+
+					var _n = array_length(_a);
+					if (_n > 0) {						
+						for (var _i=0; _i<_n; _i++) {
+							var _b = _a[_i].getDescendants();				
+							var _m = array_length(_b);
+							for (var _j=0; _j<_m; _j++)			array_push(_a, _b[_j]);
+						}
+					}
+					
+					// Copy common widgets at the end in order to give them preference						
+					if (self.__type == UI_TYPE.PANEL) {
+						var _n_common = array_length(self.getChildren(-1));
+						var _common = self.getChildren(-1);
+						for (var _i=0; _i<_n_common; _i++)	array_push(_a, _common[_i]);
+							
+						// Descendants of common widgets 
+						for (var _i=0; _i<_n_common; _i++) {
+							var _b = _common[_i].getDescendants();				
+							var _m = array_length(_b);
+							for (var _j=0; _j<_m; _j++)		array_push(_a, _b[_j]);
+						}
+					}
+						
+					return _a;
+				
+				}
+			
+				/// @method				destroy()
+				/// @description		Destroys the current widget	and all its children (recursively)
+				self.destroy = function() {
+					UI.__logMessage("Destroying widget with ID '"+self.__ID+"' from containing Panel '"+self.getContainingPanel().__ID+"' on tab "+string(self.getContainingTab()), UI_MESSAGE_LEVEL.INFO);
+					
+					// Delete surface
+					if (surface_exists(self.__surface_id))	surface_free(self.__surface_id);
+					
+					if (self.__type == UI_TYPE.PANEL) {						
+						for (var _i=0, _n=array_length(self.__tabs); _i<_n; _i++) {
+							for (var _m=array_length(self.__tabs[_i]), _j=_m-1; _j>=0; _j--) {
+								//self.__children[_i].destroy();
+								self.__tabs[_i][_j].destroy();
+							}
+						}
+						// Destroy common widgets too
+						for (var _n=array_length(self.__common_widgets), _i=_n-1; _i>=0; _i--) {
+							self.__common_widgets[_i].destroy();
+						}
+						self.__close_button = undefined;
+						self.__tab_button_control = undefined;
+						UI.__destroy_widget(self);
+						UI.__currentlyHoveredPanel = noone;
+						
+						if (self.__modal) {
+							var _n = array_length(UI.__panels);
+							for (var _i=0; _i<_n; _i++) {
+								if (UI.__panels[_i].__ID != self.__ID) {
+									UI.__panels[_i].setEnabled(true);
+								}
+							}
+						}
+					}
+					else {						
+						// Delete children
+						for (var _n=array_length(self.__children), _i=_n-1; _i>=0; _i--) {
+							self.__children[_i].destroy();						
+						}
+						// Remove from parent panel						
+						if (self.__parent.__type == UI_TYPE.PANEL) {
+							var _t = self.getContainingTab();
+							self.__parent.remove(self.__ID, _t);
+						}
+						else {
+							self.__parent.remove(self.__ID);
+						}
+						UI.__destroy_widget(self);
+					}					
+					self.__children = [];					
+					UI.__currentlyDraggedWidget = noone;
+				}		
+				
+				/// @method				getChildrenBoundingBoxAbsolute()
+				/// @description		Gets the dimensions of the minimum bounding rectangle that contains all chidren in the current tab, *relative to the screen*. <br>
+				///						Does not consider common elements.
+				/// @return				{Struct}	the screen dimensions (x, y, width and height) for the minimum bounding box
+				self.getChildrenBoundingBoxAbsolute = function() {
+					var _min_y=99999999;
+					var _max_y=-99999999;
+					var _min_x=99999999;
+					var _max_x=-99999999;
+					for (var _i=0; _i<array_length(self.__children); _i++) {
+						var _child = self.__children[_i];
+						var _dim = _child.getDimensions();
+						// Temporary (:D) fix for text width/height being 0
+						var _this_w = _child.__type == UI_TYPE.TEXT ? UI_TEXT_RENDERER(_child.getText()).get_width() : _dim.width;
+						var _this_h = _child.__type == UI_TYPE.TEXT ? UI_TEXT_RENDERER(_child.getText()).get_height() : _dim.height;
+						_min_y = min(_min_y, _dim.y);
+						_max_y = max(_max_y, _dim.y+_this_h);
+						_min_x = min(_min_x, _dim.x);
+						_max_x = max(_max_x, _dim.x+_this_w);
+					}
+					var _w = _max_x - _min_x;
+					var _h = _max_y - _min_y;
+					return {x: _min_x, y: _min_y, width: _w, height: _h};						
+				}
+				
+				/// @method				getChildrenBoundingBoxRelative()
+				/// @description		Gets the dimensions of the minimum bounding rectangle that contains all chidren in the current tab, *relative to its container coordinates*. <br>
+				///						Does not consider common elements.
+				/// @return				{Struct}	the parent-based dimensions (x, y, width and height) for the minimum bounding box
+				self.getChildrenBoundingBoxRelative = function() {
+					var _min_y=99999999;
+					var _max_y=-99999999;
+					var _min_x=99999999;
+					var _max_x=-99999999;
+					for (var _i=0; _i<array_length(self.__children); _i++) {
+						var _child = self.__children[_i];
+						var _dim = _child.getDimensions();
+						// Temporary (:D) fix for text width/height being 0
+						var _this_w = _child.__type == UI_TYPE.TEXT ? UI_TEXT_RENDERER(_child.getText()).get_width() : _dim.width;
+						var _this_h = _child.__type == UI_TYPE.TEXT ? UI_TEXT_RENDERER(_child.getText()).get_height() : _dim.height;
+						_min_y = min(_min_y, _dim.relative_y);
+						_max_y = max(_max_y, _dim.relative_y+_this_h);
+						_min_x = min(_min_x, _dim.relative_x);
+						_max_x = max(_max_x, _dim.relative_x+_this_w);
+					}
+					var _w = _max_x - _min_x;
+					var _h = _max_y - _min_y;
+					return {x: _min_x, y: _min_y, width: _w, height: _h};						
+				}
+			
+			#endregion		
+		}
+	
+	#endregion
+	
+#endregion
+
+#region Utility
+
+	/// @function					sprite_scale(_sprite, _image, _scale_x, _scale_y = _scale_x)
+	/// @description				scales an existing sprite frame by the specified scale and returns a new scaled sprite
+	/// @param	{Asset.GMSprite}	_sprite		the sprite to scale
+	/// @param	{Real}				_image		the image of the sprite to scale
+	/// @param	{Real}				_scale_x	the x scale
+	/// @param	{Real}				[_scale_y]	the y scale, by default equal to the x scale
+	/// @return	{Asset.GMSprite}	the new scaled sprite
+	function sprite_scale(_sprite, _image, _scale_x, _scale_y = _scale_x) {
+		var _w = sprite_exists(_sprite) ? sprite_get_width(_sprite) : 0;
+		var _h = sprite_exists(_sprite) ? sprite_get_height(_sprite) : 0;
+		var _s = surface_create(_w * _scale_x, _h * _scale_y);
+		surface_set_target(_s);
+		draw_clear_alpha(c_black, 0);
+		if (sprite_exists(_sprite)) draw_sprite_ext(_sprite, _image, 0, 0, _scale_x, _scale_y, 0, c_white, 1);
+		surface_reset_target();
+		var _spr = sprite_create_from_surface(_s, 0, 0, _w * _scale_x, _h * _scale_y, false, false, sprite_get_xoffset(_sprite) * _scale_x, sprite_get_yoffset(_sprite) * _scale_y);
+		surface_free(_s);
+		return _spr;
+	}
+
+	/// @function					room_x_to_gui(_x)
+	/// @description				returns the GUI coordinate corresponding to the specified room x posiition
+	/// @param	{Real}				_x				the room x
+	/// @param	{ID}				[_camera]		the camera ID, by default, the active camera
+	/// @return	{Real}				the GUI x coordinate
+	function room_x_to_gui(_x, _camera = camera_get_active()) {
+		return (_x-camera_get_view_x(_camera)) * display_get_gui_width() / camera_get_view_width(_camera);
+	}
+	
+	/// @function					room_y_to_gui(_y)
+	/// @description				returns the GUI coordinate corresponding to the specified room y posiition
+	/// @param	{Real}				_y		the room y
+	/// @param	{ID}				[_camera]		the camera ID, by default, the active camera
+	/// @return	{Real}				the GUI y coordinate
+	function room_y_to_gui(_y, _camera = camera_get_active()) {
+		return (_y-camera_get_view_y(_camera)) * display_get_gui_height() / camera_get_view_height(_camera);
+	}
+
+
+#endregion
+
+#region GM Text Renderer
+	
+	function text_renderer(_text) constructor {
+		self.text = _text;
+		self.draw = function(_x, _y) {
+			draw_text(_x, _y, self.text);
+			return self;
+		}
+		self.get_text = function() {
+			return self.text;
+		}
+		self.get_width = function() {
+			return string_width(self.text);
+		}
+		self.get_height = function() {
+			return string_height(self.text);
+		}
+		self.get_left = function(_x) {
+			return draw_get_halign() == fa_left ? _x : (draw_get_halign() == fa_right ? _x - self.get_width() : _x - self.get_width()/2);
+		}
+		self.get_right = function(_x) {
+			return draw_get_halign() == fa_right ? _x : (draw_get_halign() == fa_left ? _x - self.get_width() : _x + self.get_width()/2);
+		}
+		self.get_top = function(_y) {
+			return draw_get_valign() == fa_top ? _y : (draw_get_valign() == fa_bottom ? _y - self.get_height() : _y - self.get_height()/2);
+		}
+		self.get_bottom = function(_y) {
+			return draw_get_valign() == fa_bottom ? _y : (draw_get_valign() == fa_top ? _y - self.get_height() : _y + self.get_height()/2);
+		}
+		return self;
+	}
+
+#endregion
