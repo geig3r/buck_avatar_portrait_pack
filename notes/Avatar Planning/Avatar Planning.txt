@@ -9,9 +9,128 @@ as one of the locked is changed.
 
 Need to lock skill tone
 Need to lock torso and clothes based upon fem/masc
+Blendmode or shader effects for some things
 
 
+Main controls
 
+Select Masculine / Feminine 
+Locks torso and clothes
+All locked items change skin tone of all other locked items
+
+Structure of main categories and the tabs they'll have
+    [Accessories] => Array
+        (
+            [Glasses] => 
+            [Headwear] => 
+            [Jewelry] => 
+            [Masks] => 
+        )
+
+    [Beards] => no tabs
+    [Ears] => Array
+        (
+            [Animal Ear] => 
+            [Attached Lobe] => locked to torso/head
+            [Bat Ear] => locked to torso/head
+            [Elf Ear] => lock to torso/head
+            [Sticking Out] => locked to torso/head
+        )
+
+    [Emotes] => no tab
+    [Eyebag] => Array
+        (
+            [Basic] => 
+            [Tired] => 
+        )
+
+    [Eyebrows] => no tab
+    [Eyelids] => Array
+        (
+            [Hooded] => 
+            [Monolid] => 
+            [Rounded] => 
+        )
+
+    [Facial Markings] => want multi
+    [Hair] => Array
+        (
+            [Afro] => 
+            [Anime] => 
+            [Bald] => 
+            [Big Bangs] => 
+            [Big Quiff] => 
+            [Bobcut] => 
+            [Crewcut] => 
+            [Elfcurls] => 
+            [Mohawk] => 
+            [Pigtails] => 
+            [Pixie] => 
+            [Shaved Sides] => 
+            [Shoulder Curls] => 
+            [Shoulder Length] => 
+            [Skinfade] => 
+            [Topknot] => 
+        )
+
+    [Hats] => no tab
+    [Headshapes] => Array
+        (
+            [Heart] => 
+            [Oval] => 
+            [Round] => 
+            [Square] => 
+        )
+
+    [Irises] => no tab
+    [Lips] => no lock
+        (
+            [Full] => 
+            [Heavy Lower] => 
+            [Round] => 
+            [Thin] => 
+        )
+
+    [Noses] => locked to skin tone
+        (
+            [Aquiiline] => 
+            [Broken] => 
+            [Nubian] => 
+            [Round] => 
+            [Snub] => 
+            [Straight] => 
+        )
+
+    [Pupils] => no tab
+    [Sclera] => no tab [make some custom versions]
+    [Torso Clothes] => Array
+        (
+            [Feminine] => locked to feminine torso
+                (
+                    [Buttondown] => 
+                    [Hoodie] => 
+                    [0] => 
+                    [T-Shirt] => 
+                )
+
+            [Masculine] => locked to masculine torso
+                (
+                    [Buttondown] => 
+                    [Hoodie] => 
+                    [0] => 
+                    [T-Shirt] => 
+                )
+
+        )
+
+    [Torsos] => Array
+        (
+
+            [Feminine] => 
+            [Masculine] => 
+        
+
+        )
 
 
 
