@@ -23,4 +23,10 @@ font_enable_effects(fnt_small_sdf, true, {
     outlineColour: c_black
 });
 
+font_enable_effects(fnt_smaller_sdf, true, {
+    outlineEnable: true,
+    outlineDistance: 2,
+    outlineColour: c_black
+});
+
 

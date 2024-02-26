@@ -6,7 +6,7 @@
 if keyboard_check_pressed(ord("O"))
 {
     global.debug = !global.debug;
-    show_debug_overlay(global.debug);
+    //show_debug_overlay(global.debug);
 }
 
 

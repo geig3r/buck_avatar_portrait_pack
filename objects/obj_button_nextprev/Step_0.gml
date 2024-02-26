@@ -53,22 +53,37 @@ if (device_mouse_x_to_gui(0) > bbox_left && device_mouse_x_to_gui(0) < bbox_righ
 
 				with(button_parent)
 				{
-					if (image_index + 1 > image_number) {
-						image_index = 0;
-					} else {
-						image_index++;
+
+					if (self.id == other.button_parent_id)
+					{
+						if (self.image_index + 1 > self.image_number)
+						{
+							self.image_index = 0;
+						}
+						else
+						{
+							self.image_index++;
+						}
 					}
 				}
 			}
 			else if (button_text == "PREV")
 			{
+				
+				
 				with(button_parent)
-				{				
-					if (image_index - 1 < 0) {
-						image_index = image_number;
-					} else {
-						image_index--;
-				}
+				{
+					if (self.id == other.button_parent_id)
+					{
+						if (id == other.button_parent_id && image_index - 1 < 0)
+						{
+							image_index = image_number;
+						}
+						else
+						{
+							image_index--;
+						}
+					}
 				}
 			}
 		}

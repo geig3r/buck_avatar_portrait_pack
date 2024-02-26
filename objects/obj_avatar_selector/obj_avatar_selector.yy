@@ -30,8 +30,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "spr_blank_500",
-    "path": "sprites/spr_blank_500/spr_blank_500.yy",
+    "name": "spr_blank_120x40",
+    "path": "sprites/spr_blank_120x40/spr_blank_120x40.yy",
   },
   "spriteMaskId": null,
   "visible": true,

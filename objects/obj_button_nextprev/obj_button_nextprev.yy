@@ -32,8 +32,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "spr_button_nextprev",
-    "path": "sprites/spr_button_nextprev/spr_button_nextprev.yy",
+    "name": "spr_button_nextprev_small",
+    "path": "sprites/spr_button_nextprev_small/spr_button_nextprev_small.yy",
   },
   "spriteMaskId": null,
   "visible": true,
