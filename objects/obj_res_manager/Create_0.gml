@@ -16,3 +16,4 @@ display_set_gui_size(_width*_scale, _height*_scale);
 
 
 room_goto(rm_menu);
+

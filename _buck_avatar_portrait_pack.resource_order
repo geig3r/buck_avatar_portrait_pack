@@ -375,6 +375,7 @@
     {"name":"spr_torso_feminine_hoodie_03","order":2,"path":"sprites/spr_torso_feminine_hoodie_03/spr_torso_feminine_hoodie_03.yy",},
     {"name":"spr_ear_attachedlobe_skintone_05","order":4,"path":"sprites/spr_ear_attachedlobe_skintone_05/spr_ear_attachedlobe_skintone_05.yy",},
     {"name":"snd_player_jump_2","order":10,"path":"sounds/snd_player_jump_2/snd_player_jump_2.yy",},
+    {"name":"Script124","order":2,"path":"scripts/Script124/Script124.yy",},
     {"name":"spr_face_oval_skintone_04","order":3,"path":"sprites/spr_face_oval_skintone_04/spr_face_oval_skintone_04.yy",},
     {"name":"__scribble_get_state","order":14,"path":"scripts/__scribble_get_state/__scribble_get_state.yy",},
     {"name":"scribble_anim_wheel","order":8,"path":"scripts/scribble_anim_wheel/scribble_anim_wheel.yy",},

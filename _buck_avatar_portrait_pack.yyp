@@ -464,6 +464,7 @@
     {"id":{"name":"spr_ear_attachedlobe_skintone_05","path":"sprites/spr_ear_attachedlobe_skintone_05/spr_ear_attachedlobe_skintone_05.yy",},},
     {"id":{"name":"spr_torso_masculine_shirt_01","path":"sprites/spr_torso_masculine_shirt_01/spr_torso_masculine_shirt_01.yy",},},
     {"id":{"name":"snd_player_jump_2","path":"sounds/snd_player_jump_2/snd_player_jump_2.yy",},},
+    {"id":{"name":"Script124","path":"scripts/Script124/Script124.yy",},},
     {"id":{"name":"spr_face_oval_skintone_04","path":"sprites/spr_face_oval_skintone_04/spr_face_oval_skintone_04.yy",},},
     {"id":{"name":"__scribble_get_state","path":"scripts/__scribble_get_state/__scribble_get_state.yy",},},
     {"id":{"name":"scribble_anim_wheel","path":"scripts/scribble_anim_wheel/scribble_anim_wheel.yy",},},

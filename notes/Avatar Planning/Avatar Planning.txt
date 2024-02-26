@@ -1,5 +1,40 @@
 Avatar Planning
 
+
+We'll need an avatar system constructor because we'll want to use the avatar system to draw avatars.
+
+This system will handly only the drawing, but take input from other system like the selector
+and a token? string code that you can copy/paste to use as an avatar preset.
+Basically a coded string that represents the avatar options
+Figure out a sytem that you can use for all layers or only some, like having preset outfits
+torso/hat/glasses, but everything else isn't pre-defined.  So we can eventually have outfit selectors/presets.
+
+
+
+
+We'll have the avatar selector be optional and separately defined 
+avatar_system.has_selector
+avatar_system.selector_x/y
+
+Set up the avatar selector to carry all of the locking and options.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 how to lock skin color for various body parts.  We'll pass the skin type and have a flag that locks it. 
 Maybe an array of the locked types.  
 
@@ -10,6 +45,11 @@ as one of the locked is changed.
 Need to lock skill tone
 Need to lock torso and clothes based upon fem/masc
 Blendmode or shader effects for some things
+
+Because all of these elements have the same parent, we can search through all of them to see if
+share the same lock list var as whichever element is being changed.
+
+
 
 
 Main controls
