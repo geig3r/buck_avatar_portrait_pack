@@ -17,3 +17,18 @@ display_set_gui_size(_width*_scale, _height*_scale);
 
 room_goto(rm_menu);
 
+
+function weapon() constructor
+{
+    static number_of_weapons = 0;
+    number_of_weapons ++;
+}
+
+var _weapon1 = new weapon();
+var _weapon2 = new weapon();
+
+show_debug_message(weapon.number_of_weapons);   // Accessing from constructor directly
+show_debug_message(_weapon1.number_of_weapons); // Accessing from a struct
+show_debug_message(_weapon2.number_of_weapons); // Accessing from a struct
+
+game_end();

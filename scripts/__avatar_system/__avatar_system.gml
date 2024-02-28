@@ -1,7 +1,7 @@
 // Script assets have changed for v2.3.0 see
 // https://help.yoyogames.com/hc/en-us/articles/360005277377 for more information
 
-
+/*
 enum AV_SPRITE_ORIGIN {
 	TOP_LEFT,
 	TOP_CENTER,
@@ -13,11 +13,13 @@ enum AV_SPRITE_ORIGIN {
 	BOTTOM_CENTER,
 	BOTTOM_RIGHT
 }
-
+*/
 //
 
 
-function AvatarSystem(_avatar_settings, _x1, _y1, _size = 500, _pos_absolute = true) constructor {
+
+
+function AvatarDraw(_avatar_settings, _x1, _y1, _size = 500, _pos_absolute = true) constructor {
 
 
 
