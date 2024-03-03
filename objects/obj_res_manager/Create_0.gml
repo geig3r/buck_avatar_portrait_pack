@@ -31,4 +31,3 @@ show_debug_message(weapon.number_of_weapons);   // Accessing from constructor di
 show_debug_message(_weapon1.number_of_weapons); // Accessing from a struct
 show_debug_message(_weapon2.number_of_weapons); // Accessing from a struct
 
-game_end();
