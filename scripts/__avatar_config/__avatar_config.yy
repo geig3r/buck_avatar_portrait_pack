@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "__avatar_config",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "Avatar System",
-    "path": "folders/Scripts/Avatar System.yy",
+  "$GMScript":"",
+  "%Name":"__avatar_config",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__avatar_config",
+  "parent":{
+    "name":"Avatar System",
+    "path":"folders/Scripts/Avatar System.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

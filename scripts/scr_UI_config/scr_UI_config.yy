@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "scr_UI_config",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "UI",
-    "path": "folders/Objects/Engine/UI.yy",
+  "$GMScript":"",
+  "%Name":"scr_UI_config",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_UI_config",
+  "parent":{
+    "name":"UI",
+    "path":"folders/Objects/Engine/UI.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

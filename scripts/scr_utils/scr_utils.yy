@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "scr_utils",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "Placeholder",
-    "path": "folders/Scripts/Placeholder.yy",
+  "$GMScript":"",
+  "%Name":"scr_utils",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_utils",
+  "parent":{
+    "name":"Placeholder",
+    "path":"folders/Scripts/Placeholder.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "GUIBox",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "Placeholder",
-    "path": "folders/Scripts/Placeholder.yy",
+  "$GMScript":"",
+  "%Name":"GUIBox",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"GUIBox",
+  "parent":{
+    "name":"Placeholder",
+    "path":"folders/Scripts/Placeholder.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }
